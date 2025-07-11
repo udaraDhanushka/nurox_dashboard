@@ -11,7 +11,6 @@ import {
   FileText,
   Beaker,
   Pill,
-  Bell,
   Settings,
   LogOut,
   Menu,
@@ -84,10 +83,14 @@ export default function DashboardLayout({
   const { user, isLoading, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+    // Only redirect if auth is fully resolved and user is not authenticated
+    if (!isLoading && !isAuthenticated && !user) {
+      // Add a small delay to prevent race conditions
+      setTimeout(() => {
+        router.push('/login');
+      }, 100);
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, user, router]);
 
   const handleLogout = async () => {
     await logout();
@@ -103,12 +106,16 @@ export default function DashboardLayout({
     );
   }
 
-  // Don't render if not authenticated
+  // Don't render if not authenticated - but prevent flickering
   if (!isAuthenticated || !user) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
-  const navItems = roleNavItems[user.role] || [];
+  const navItems = roleNavItems[user?.role] || [];
 
   return (
     <div className="min-h-screen bg-gray-100">

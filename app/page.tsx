@@ -1,11 +1,48 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
 import Image from 'next/image';
+import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
+  const { isAuthenticated, user, isLoading } = useAuth();
+  const router = useRouter();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      const getRoleDashboardPath = (role: string) => {
+        switch (role) {
+          case 'SUPER_ADMIN': return '/dashboard/admin';
+          case 'HOSPITAL_ADMIN': return '/dashboard/hospital';
+          case 'PHARMACY_ADMIN': return '/dashboard/pharmacy';
+          case 'LAB_ADMIN': return '/dashboard/lab';
+          case 'INSURANCE_ADMIN': return '/dashboard/insurer';
+          case 'DOCTOR': return '/dashboard/doctor';
+          case 'PHARMACIST': return '/dashboard/pharmacist';
+          case 'MLT': return '/dashboard/mlt';
+          default: return '/dashboard';
+        }
+      };
+      
+      const dashboardPath = getRoleDashboardPath(user.role);
+      router.push(dashboardPath);
+    }
+  }, [isLoading, isAuthenticated, user, router]);
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}

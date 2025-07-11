@@ -83,23 +83,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
+        // Check if we're in a browser environment
+        if (typeof window === 'undefined') {
+          setIsLoading(false);
+          return;
+        }
+
         const token = localStorage.getItem('accessToken');
         const storedUser = localStorage.getItem('user');
 
         if (token && storedUser) {
-          // Set token in API service
-          apiService.setToken(token);
-          
-          // Try to get current user from server to ensure token is valid
-          const response = await apiService.getCurrentUser();
-          
-          if (response.success && response.data) {
-            setUser(response.data as User);
+          try {
+            // Parse and validate stored user data
+            const parsedUser = JSON.parse(storedUser);
+            if (!parsedUser || !parsedUser.email || !parsedUser.role) {
+              throw new Error('Invalid user data');
+            }
+
+            // Set token in API service
+            apiService.setToken(token);
             
-            // Initialize socket connection
-            initializeSocket(token);
-          } else {
-            // Token is invalid, clear stored data
+            // Try to get current user from server to ensure token is valid
+            const response = await apiService.getCurrentUser();
+            
+            if (response.success && response.data) {
+              setUser(response.data as User);
+              
+              // Initialize socket connection safely
+              try {
+                initializeSocket(token);
+              } catch (socketError) {
+                console.warn('Socket initialization failed:', socketError);
+                // Continue without socket - not critical for basic functionality
+              }
+            } else {
+              // Token is invalid, clear stored data
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
+              localStorage.removeItem('user');
+            }
+          } catch (parseError) {
+            console.error('Error parsing stored user data:', parseError);
+            // Clear corrupted data
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
@@ -107,11 +132,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        // Clear invalid data
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        // Clear invalid data safely
+        try {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+        } catch (storageError) {
+          console.error('Error clearing localStorage:', storageError);
+        }
       } finally {
+        // Add a small delay to prevent flickering
+        await new Promise(resolve => setTimeout(resolve, 100));
         setIsLoading(false);
       }
     };

@@ -81,26 +81,6 @@ export default function LoginForm() {
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  // Handle client-side mounting
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Redirect if already authenticated (but only after auth loading is complete)
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && user) {
-      const dashboardPath = getRoleDashboardPath(user.role);
-      if (dashboardPath) {
-        router.push(dashboardPath);
-      } else {
-        // For restricted roles (PATIENT, INSURANCE_AGENT), show access denied message
-        toast.error(`Access denied. ${user.role === 'PATIENT' ? 'Patients' : 'Insurance Agents'} should use the Nurox Mobile App.`);
-        // Logout the user since they can't access dashboard
-        // logout(); // Uncomment if logout function is available
-      }
-    }
-  }, [authLoading, isAuthenticated, user, router]);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -108,6 +88,54 @@ export default function LoginForm() {
       password: '',
     },
   });
+
+  // Handle client-side mounting
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Redirect if already authenticated (but only after auth loading is complete)
+  useEffect(() => {
+    // Only redirect if fully authenticated and not currently loading
+    if (!authLoading && isAuthenticated && user && !isLoading) {
+      const dashboardPath = getRoleDashboardPath(user.role);
+      if (dashboardPath) {
+        // Add a small delay to ensure state is stable
+        setTimeout(() => {
+          router.push(dashboardPath);
+        }, 50);
+      } else {
+        // For restricted roles (PATIENT, INSURANCE_AGENT), show access denied message
+        toast.error(`Access denied. ${user.role === 'PATIENT' ? 'Patients' : 'Insurance Agents'} should use the Nurox Mobile App.`);
+        // Logout the user since they can't access dashboard
+        // logout(); // Uncomment if logout function is available
+      }
+    }
+  }, [authLoading, isAuthenticated, user, router, isLoading]);
+
+  // Don't render anything until both mounted and auth state is resolved
+  if (!isMounted || authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+        <div className="w-full max-w-md text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If already authenticated, show loading while redirecting
+  if (isAuthenticated && user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+        <div className="w-full max-w-md text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p>Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!isMounted) return;
@@ -136,13 +164,6 @@ export default function LoginForm() {
     form.setValue('password', 'admin123456');
   };
 
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
-        <div className="w-full max-w-md text-center">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">

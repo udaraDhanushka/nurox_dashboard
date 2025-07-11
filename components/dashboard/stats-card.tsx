@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface StatsCardProps {
+interface SimpleStatsCardProps {
   title: string;
   value: string | number;
   description?: string;
   icon?: React.ReactNode;
 }
 
-export function StatsCard({ title, value, description, icon }: StatsCardProps) {
+export function SimpleStatsCard({ title, value, description, icon }: SimpleStatsCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -22,4 +22,7 @@ export function StatsCard({ title, value, description, icon }: StatsCardProps) {
       </CardContent>
     </Card>
   );
-} 
+}
+
+// Export alias for backward compatibility
+export const StatsCard = SimpleStatsCard; 
