@@ -1,5 +1,6 @@
 'use client';
 
+import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,7 +36,8 @@ const recentPrescriptions = [
 
 export default function PharmacyDashboard() {
   return (
-    <div className="space-y-6">
+    <DashboardLayout role="pharmacy">
+      <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Pharmacy Dashboard</h2>
         <p className="text-muted-foreground">Monitor prescriptions and inventory status.</p>
@@ -177,6 +179,7 @@ export default function PharmacyDashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 } 

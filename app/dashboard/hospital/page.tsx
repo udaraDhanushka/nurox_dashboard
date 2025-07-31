@@ -1,12 +1,13 @@
 'use client';
 
 import { useAuth } from '@/lib/auth-context';
+import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { Users, UserCheck, Calendar, Activity, AlertTriangle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function HospitalDashboard() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalStaff: 0,
     pendingDoctors: 0,
@@ -39,20 +40,15 @@ export default function HospitalDashboard() {
     fetchStats();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user || user.role !== 'HOSPITAL_ADMIN') {
-    return <div>Access denied</div>;
-  }
+  // Parent layout handles loading and authentication checks
 
   return (
-    <div className="space-y-6 p-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Hospital Dashboard</h2>
-        <p className="text-muted-foreground">
-          Manage your hospital operations and staff.
+    <DashboardLayout role="hospital">
+      <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Hospital Dashboard</h1>
+        <p className="text-gray-600">
+          Manage your hospital operations and staff efficiently.
         </p>
       </div>
 
@@ -60,7 +56,7 @@ export default function HospitalDashboard() {
         <div>Loading statistics...</div>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
             <StatsCard
               title="Total Staff"
               value={stats.totalStaff}
@@ -93,7 +89,7 @@ export default function HospitalDashboard() {
             />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {/* Recent Activity */}
             <div className="col-span-1">
               <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
@@ -159,6 +155,7 @@ export default function HospitalDashboard() {
           </div>
         </>
       )}
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

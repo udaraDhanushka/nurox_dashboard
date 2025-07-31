@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import {
   Bell,
   Calendar,
-  ChevronLeft,
   ClipboardList,
   FileText,
-  Home,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -175,24 +174,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
-  
-  useEffect(() => {
-    // Check for user data in localStorage
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      router.replace('/login');
-      return;
-    }
-
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== role) {
-      router.replace('/login');
-      return;
-    }
-
-    setUser(parsedUser);
-  }, [role, router]);
+  const { user, logout } = useAuth();
   
   const sidebarItems = sidebarItemsByRole[role] || [];
   
@@ -229,20 +211,19 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
     }
   };
 
-  const handleSignOut = () => {
-    localStorage.removeItem('user');
+  const handleSignOut = async () => {
+    await logout();
     router.replace('/login');
   };
 
-  if (!user) {
-    return null; // Or a loading spinner
-  }
+  // The parent layout handles authentication, so we can assume user exists here
 
-  const userInitials = (user.name || 'User')
+  const userInitials = (user?.name || 'User')
     .split(' ')
-    .map(part => part[0])
+    .map((part: string) => part[0])
     .join('')
     .toUpperCase();
+
 
   return (
     <div className="flex min-h-screen">
@@ -280,11 +261,11 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 mb-4">
             <Avatar>
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} />
+              <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium">{user.name || 'User'}</p>
+              <p className="text-sm font-medium">{user?.name || 'User'}</p>
               <p className="text-xs text-muted-foreground">{getRoleTitle()}</p>
             </div>
           </div>
@@ -297,6 +278,11 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
       
       {/* Mobile sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+          </Button>
+        </SheetTrigger>
         <SheetContent side="left" className="p-0">
           <div className="p-6 border-b">
             <Link href="/" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
@@ -333,11 +319,11 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
           <div className="p-4 border-t mt-auto">
             <div className="flex items-center gap-3 mb-4">
               <Avatar>
-                <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} />
+                <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
                 <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium">{user.name || 'User'}</p>
+                <p className="text-sm font-medium">{user?.name || 'User'}</p>
                 <p className="text-xs text-muted-foreground">{getRoleTitle()}</p>
               </div>
             </div>
@@ -354,11 +340,9 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
         {/* Header */}
         <header className="h-16 border-b flex items-center px-4 sm:px-6">
           <div className="flex items-center gap-2 md:hidden">
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
+            <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
+              <Menu className="h-5 w-5" />
+            </Button>
             <Link href="/" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-lg">H</span>
@@ -376,7 +360,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full hidden md:flex">
                   <Avatar>
-                    <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} />
+                    <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
                     <AvatarFallback>{userInitials}</AvatarFallback>
                   </Avatar>
                 </Button>
@@ -384,7 +368,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{user.name || 'User'}</p>
+                    <p className="text-sm font-medium">{user?.name || 'User'}</p>
                     <p className="text-xs text-muted-foreground">{getRoleTitle()}</p>
                   </div>
                 </DropdownMenuLabel>
@@ -407,14 +391,14 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
             
             {/* User avatar - mobile */}
             <Avatar className="md:hidden h-8 w-8">
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random`} />
+              <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
           </div>
         </header>
         
         {/* Main area */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto p-6">
           {children}
         </main>
       </div>

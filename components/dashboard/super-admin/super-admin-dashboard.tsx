@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { apiService } from '@/lib/api';
 import { socketService } from '@/lib/socket';
@@ -110,6 +110,17 @@ export default function SuperAdminDashboard() {
     setupSocketListeners();
   }, [loadOrganizations, setupSocketListeners]);
 
+  // Clear form data when dialog opens or create type changes
+  useEffect(() => {
+    if (showCreateDialog) {
+      setFormData({});
+    }
+  }, [showCreateDialog]);
+
+  useEffect(() => {
+    setFormData({});
+  }, [createType]);
+
   const handleCreateOrganization = async () => {
     try {
       let response;
@@ -143,6 +154,17 @@ export default function SuperAdminDashboard() {
     }
   };
 
+  const handleDialogClose = useCallback((open: boolean) => {
+    setShowCreateDialog(open);
+    if (!open) {
+      setFormData({});
+    }
+  }, []);
+
+  const updateFormField = useCallback((field: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  }, []);
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'ACTIVE':
@@ -156,165 +178,173 @@ export default function SuperAdminDashboard() {
     }
   };
 
-  const CreateOrganizationForm = () => (
-    <div className="space-y-4">
-      <div>
-        <Label htmlFor="type">Organization Type</Label>
-        <Select value={createType} onValueChange={(value: any) => setCreateType(value)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="hospital">Hospital</SelectItem>
-            <SelectItem value="pharmacy">Pharmacy</SelectItem>
-            <SelectItem value="laboratory">Laboratory</SelectItem>
-            <SelectItem value="insurance">Insurance Company</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+  const CreateOrganizationForm = useMemo(() => {
+    const handleSpecialtiesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const specialties = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+      setFormData((prev: any) => ({ 
+        ...prev, 
+        specialtiesText: e.target.value,
+        specialties 
+      }));
+    };
 
-      <div>
-        <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          value={formData.name || ''}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder={`Enter ${createType} name`}
-        />
-      </div>
+    const handleTestTypesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const testTypes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+      setFormData((prev: any) => ({ 
+        ...prev, 
+        testTypesText: e.target.value,
+        testTypes 
+      }));
+    };
 
-      <div>
-        <Label htmlFor="registrationNumber">Registration Number</Label>
-        <Input
-          id="registrationNumber"
-          value={formData.registrationNumber || ''}
-          onChange={(e) => setFormData({ ...formData, registrationNumber: e.target.value })}
-          placeholder="Enter registration number"
-        />
-      </div>
+    const handleCoverageTypesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const coverageTypes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+      setFormData((prev: any) => ({ 
+        ...prev, 
+        coverageTypesText: e.target.value,
+        coverageTypes 
+      }));
+    };
 
-      <div>
-        <Label htmlFor="licenseNumber">License Number</Label>
-        <Input
-          id="licenseNumber"
-          value={formData.licenseNumber || ''}
-          onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
-          placeholder="Enter license number"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="address">Address</Label>
-        <Textarea
-          id="address"
-          value={formData.address || ''}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          placeholder="Enter address"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+    return (
+      <div className="space-y-4">
         <div>
-          <Label htmlFor="phone">Phone</Label>
+          <Label htmlFor="type">Organization Type</Label>
+          <Select value={createType} onValueChange={(value: any) => setCreateType(value)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="hospital">Hospital</SelectItem>
+              <SelectItem value="pharmacy">Pharmacy</SelectItem>
+              <SelectItem value="laboratory">Laboratory</SelectItem>
+              <SelectItem value="insurance">Insurance Company</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="name">Name</Label>
           <Input
-            id="phone"
-            value={formData.phone || ''}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            placeholder="Phone number"
+            id="name"
+            value={formData.name || ''}
+            onChange={(e) => updateFormField('name', e.target.value)}
+            placeholder={`Enter ${createType} name`}
           />
         </div>
+
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="registrationNumber">Registration Number</Label>
           <Input
-            id="email"
-            type="email"
-            value={formData.email || ''}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            placeholder="Email address"
+            id="registrationNumber"
+            value={formData.registrationNumber || ''}
+            onChange={(e) => updateFormField('registrationNumber', e.target.value)}
+            placeholder="Enter registration number"
           />
         </div>
-      </div>
 
-      <div>
-        <Label htmlFor="contactPerson">Contact Person</Label>
-        <Input
-          id="contactPerson"
-          value={formData.contactPerson || ''}
-          onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
-          placeholder="Contact person name"
-        />
-      </div>
+        <div>
+          <Label htmlFor="licenseNumber">License Number</Label>
+          <Input
+            id="licenseNumber"
+            value={formData.licenseNumber || ''}
+            onChange={(e) => updateFormField('licenseNumber', e.target.value)}
+            placeholder="Enter license number"
+          />
+        </div>
 
-      {createType === 'hospital' && (
-        <>
+        <div>
+          <Label htmlFor="address">Address</Label>
+          <Textarea
+            id="address"
+            value={formData.address || ''}
+            onChange={(e) => updateFormField('address', e.target.value)}
+            placeholder="Enter address"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="specialties">Specialties (comma-separated)</Label>
+            <Label htmlFor="phone">Phone</Label>
             <Input
-              id="specialties"
-              value={formData.specialtiesText || ''}
-              onChange={(e) => {
-                const specialties = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-                setFormData({ 
-                  ...formData, 
-                  specialtiesText: e.target.value,
-                  specialties 
-                });
-              }}
-              placeholder="Cardiology, Neurology, Pediatrics"
+              id="phone"
+              value={formData.phone || ''}
+              onChange={(e) => updateFormField('phone', e.target.value)}
+              placeholder="Phone number"
             />
           </div>
           <div>
-            <Label htmlFor="bedCount">Bed Count</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="bedCount"
-              type="number"
-              value={formData.bedCount || ''}
-              onChange={(e) => setFormData({ ...formData, bedCount: parseInt(e.target.value) || 0 })}
-              placeholder="Number of beds"
+              id="email"
+              type="email"
+              value={formData.email || ''}
+              onChange={(e) => updateFormField('email', e.target.value)}
+              placeholder="Email address"
             />
           </div>
-        </>
-      )}
+        </div>
 
-      {createType === 'laboratory' && (
         <div>
-          <Label htmlFor="testTypes">Test Types (comma-separated)</Label>
+          <Label htmlFor="contactPerson">Contact Person</Label>
           <Input
-            id="testTypes"
-            value={formData.testTypesText || ''}
-            onChange={(e) => {
-              const testTypes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-              setFormData({ 
-                ...formData, 
-                testTypesText: e.target.value,
-                testTypes 
-              });
-            }}
-            placeholder="Blood Test, X-Ray, MRI"
+            id="contactPerson"
+            value={formData.contactPerson || ''}
+            onChange={(e) => updateFormField('contactPerson', e.target.value)}
+            placeholder="Contact person name"
           />
         </div>
-      )}
 
-      {createType === 'insurance' && (
-        <div>
-          <Label htmlFor="coverageTypes">Coverage Types (comma-separated)</Label>
-          <Input
-            id="coverageTypes"
-            value={formData.coverageTypesText || ''}
-            onChange={(e) => {
-              const coverageTypes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-              setFormData({ 
-                ...formData, 
-                coverageTypesText: e.target.value,
-                coverageTypes 
-              });
-            }}
-            placeholder="Health, Dental, Vision"
-          />
-        </div>
-      )}
-    </div>
-  );
+        {createType === 'hospital' && (
+          <>
+            <div>
+              <Label htmlFor="specialties">Specialties (comma-separated)</Label>
+              <Input
+                id="specialties"
+                value={formData.specialtiesText || ''}
+                onChange={handleSpecialtiesChange}
+                placeholder="Cardiology, Neurology, Pediatrics"
+              />
+            </div>
+            <div>
+              <Label htmlFor="bedCount">Bed Count</Label>
+              <Input
+                id="bedCount"
+                type="number"
+                value={formData.bedCount || ''}
+                onChange={(e) => updateFormField('bedCount', parseInt(e.target.value) || 0)}
+                placeholder="Number of beds"
+              />
+            </div>
+          </>
+        )}
+
+        {createType === 'laboratory' && (
+          <div>
+            <Label htmlFor="testTypes">Test Types (comma-separated)</Label>
+            <Input
+              id="testTypes"
+              value={formData.testTypesText || ''}
+              onChange={handleTestTypesChange}
+              placeholder="Blood Test, X-Ray, MRI"
+            />
+          </div>
+        )}
+
+        {createType === 'insurance' && (
+          <div>
+            <Label htmlFor="coverageTypes">Coverage Types (comma-separated)</Label>
+            <Input
+              id="coverageTypes"
+              value={formData.coverageTypesText || ''}
+              onChange={handleCoverageTypesChange}
+              placeholder="Health, Dental, Vision"
+            />
+          </div>
+        )}
+      </div>
+    );
+  }, [createType, formData, updateFormField, setFormData]);
 
   if (loading) {
     return (
@@ -325,14 +355,14 @@ export default function SuperAdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Super Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage all organizations in the Nurox system</p>
+      <div className="flex justify-between items-start">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Super Admin Dashboard</h1>
+          <p className="text-gray-600">Manage all organizations in the Nurox healthcare system</p>
         </div>
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <Dialog open={showCreateDialog} onOpenChange={handleDialogClose}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
@@ -346,9 +376,9 @@ export default function SuperAdminDashboard() {
                 Add a new organization to the Nurox system
               </DialogDescription>
             </DialogHeader>
-            <CreateOrganizationForm />
+            {CreateOrganizationForm}
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+              <Button variant="outline" onClick={() => handleDialogClose(false)}>
                 Cancel
               </Button>
               <Button onClick={handleCreateOrganization}>
@@ -360,7 +390,7 @@ export default function SuperAdminDashboard() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Hospitals</CardTitle>

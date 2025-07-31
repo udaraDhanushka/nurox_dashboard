@@ -20,12 +20,12 @@ const LoginForm = dynamic(() => import('@/components/auth/login-form'), {
 });
 
 export default function LoginPage() {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user, isLoading, isHydrated } = useAuth();
   const router = useRouter();
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user) {
+    if (isHydrated && !isLoading && isAuthenticated && user) {
       const getRoleDashboardPath = (role: string) => {
         switch (role) {
           case 'SUPER_ADMIN': return '/dashboard/admin';
@@ -43,10 +43,10 @@ export default function LoginPage() {
       const dashboardPath = getRoleDashboardPath(user.role);
       router.push(dashboardPath);
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isHydrated, isLoading, isAuthenticated, user, router]);
 
-  // Show loading while checking auth
-  if (isLoading) {
+  // Show loading while hydrating or checking auth
+  if (!isHydrated || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="w-full max-w-md text-center">

@@ -1,29 +1,23 @@
 'use client';
 
 import { useAuth } from '@/lib/auth-context';
+import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import SuperAdminDashboard from '@/components/dashboard/super-admin/super-admin-dashboard';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { Users, Activity, Bell, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function AdminDashboard() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // Parent layout handles loading and authentication checks
+  // We can safely assume user exists here and is authenticated
 
-  if (!user) {
-    return <div>Access denied</div>;
-  }
-
-  // Route SUPER_ADMIN to the new SuperAdminDashboard
-  if (user.role === 'SUPER_ADMIN') {
-    return <SuperAdminDashboard />;
-  }
-
-  // Show legacy admin dashboard for backward compatibility with legacy ADMIN role
-  return <LegacyAdminDashboard />;
+  return (
+    <DashboardLayout role="admin">
+      {user?.role === 'SUPER_ADMIN' ? <SuperAdminDashboard /> : <LegacyAdminDashboard />}
+    </DashboardLayout>
+  );
 }
 
 // Legacy admin dashboard for backward compatibility
@@ -64,15 +58,15 @@ const LegacyAdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
-        <p className="text-muted-foreground">
-          System-wide monitoring and management.
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+        <p className="text-gray-600">
+          System-wide monitoring and management for all healthcare services.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Users"
           value={stats.totalUsers}
@@ -99,12 +93,12 @@ const LegacyAdminDashboard = () => {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Recent Activity */}
         <div className="col-span-2">
-          <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-4">
+          <h3 className="text-xl font-semibold mb-6 text-gray-900">Recent Activity</h3>
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="p-6">
               <table className="w-full">
                 <thead>
                   <tr className="text-left text-sm text-gray-500">
@@ -143,18 +137,18 @@ const LegacyAdminDashboard = () => {
 
         {/* Quick Actions */}
         <div>
-          <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
-          <div className="space-y-2">
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+          <h3 className="text-xl font-semibold mb-6 text-gray-900">Quick Actions</h3>
+          <div className="space-y-3">
+            <button className="w-full bg-white p-4 rounded-lg shadow-sm border text-left hover:bg-gray-50 transition-colors duration-200 font-medium text-gray-700">
               Approve New Users
             </button>
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+            <button className="w-full bg-white p-4 rounded-lg shadow-sm border text-left hover:bg-gray-50 transition-colors duration-200 font-medium text-gray-700">
               System Backup
             </button>
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+            <button className="w-full bg-white p-4 rounded-lg shadow-sm border text-left hover:bg-gray-50 transition-colors duration-200 font-medium text-gray-700">
               Security Settings
             </button>
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+            <button className="w-full bg-white p-4 rounded-lg shadow-sm border text-left hover:bg-gray-50 transition-colors duration-200 font-medium text-gray-700">
               View Audit Logs
             </button>
           </div>

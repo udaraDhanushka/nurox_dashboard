@@ -9,12 +9,12 @@ import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user, isLoading, isHydrated } = useAuth();
   const router = useRouter();
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user) {
+    if (isHydrated && !isLoading && isAuthenticated && user) {
       const getRoleDashboardPath = (role: string) => {
         switch (role) {
           case 'SUPER_ADMIN': return '/dashboard/admin';
@@ -32,10 +32,10 @@ export default function Home() {
       const dashboardPath = getRoleDashboardPath(user.role);
       router.push(dashboardPath);
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isHydrated, isLoading, isAuthenticated, user, router]);
 
-  // Show loading while checking auth
-  if (isLoading) {
+  // Show loading while hydrating or checking auth
+  if (!isHydrated || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

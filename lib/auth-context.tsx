@@ -9,7 +9,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  name: string; // Add name property for UI display
+  name: string; 
   role: string;
   isActive: boolean;
   hospitalId?: string;
@@ -26,11 +26,14 @@ interface User {
   insuranceCompany?: any;
   createdAt: string;
   updatedAt: string;
+  defaultRoute?: string | null;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  isInitializing: boolean;
+  isHydrated: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   logout: () => Promise<void>;
@@ -43,49 +46,61 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
 
   const isAuthenticated = !!user;
 
   const initializeSocket = useCallback((token: string) => {
     try {
-      socketService.connect(token);
-      
-      // Monitor socket connection status
-      socketService.on('connect', () => {
-        setIsSocketConnected(true);
-        console.log('Socket connected');
-      });
+      // Add a small delay to prevent blocking authentication flow
+      setTimeout(() => {
+        socketService.connect(token);
+        
+        // Monitor socket connection status
+        socketService.on('connect', () => {
+          setIsSocketConnected(true);
+          console.log('Socket connected');
+        });
 
-      socketService.on('disconnect', () => {
-        setIsSocketConnected(false);
-        console.log('Socket disconnected');
-      });
+        socketService.on('disconnect', () => {
+          setIsSocketConnected(false);
+          console.log('Socket disconnected');
+        });
 
-      // Set up ping interval to maintain connection
-      const pingInterval = setInterval(() => {
-        if (socketService.isConnected()) {
-          socketService.ping();
-        }
-      }, 30000); // Ping every 30 seconds
+        // Set up ping interval to maintain connection
+        const pingInterval = setInterval(() => {
+          if (socketService.isConnected()) {
+            socketService.ping();
+          }
+        }, 30000); // Ping every 30 seconds
 
-      // Cleanup function
-      return () => {
-        clearInterval(pingInterval);
-      };
+        // Store cleanup function
+        return () => {
+          clearInterval(pingInterval);
+        };
+      }, 500); // 500ms delay
     } catch (error) {
       console.error('Socket initialization error:', error);
+      // Don't block authentication for socket errors
     }
   }, []);
 
-  // Initialize authentication state
+  // Handle hydration first
   useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // Initialize authentication state only after hydration
+  useEffect(() => {
+    if (!isHydrated) return;
+    
     const initAuth = async () => {
       try {
         // Check if we're in a browser environment
         if (typeof window === 'undefined') {
-          setIsLoading(false);
+          setIsInitializing(false);
           return;
         }
 
@@ -103,24 +118,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Set token in API service
             apiService.setToken(token);
             
-            // Try to get current user from server to ensure token is valid
-            const response = await apiService.getCurrentUser();
+            // Set user immediately from stored data to prevent flicker
+            setUser(parsedUser as User);
             
-            if (response.success && response.data) {
-              setUser(response.data as User);
+            // Verify token with server in background
+            try {
+              const response = await apiService.getCurrentUser();
               
-              // Initialize socket connection safely
-              try {
-                initializeSocket(token);
-              } catch (socketError) {
-                console.warn('Socket initialization failed:', socketError);
-                // Continue without socket - not critical for basic functionality
+              if (!response.success) {
+                // Token is invalid, clear stored data
+                console.log('Invalid token detected, clearing authentication data');
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('user');
+                // Also clear cookie
+                document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                setUser(null);
+              } else {
+                // Initialize socket connection safely
+                try {
+                  initializeSocket(token);
+                } catch (socketError) {
+                  console.warn('Socket initialization failed:', socketError);
+                  // Continue without socket - not critical for basic functionality
+                }
               }
-            } else {
-              // Token is invalid, clear stored data
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
-              localStorage.removeItem('user');
+            } catch (apiError) {
+              console.warn('API verification failed, but keeping user logged in:', apiError);
+              // Don't logout user if API is temporarily unavailable
             }
           } catch (parseError) {
             console.error('Error parsing stored user data:', parseError);
@@ -128,6 +153,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
+            // Also clear cookie
+            document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
           }
         }
       } catch (error) {
@@ -137,22 +164,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
+          // Also clear cookie
+          document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         } catch (storageError) {
           console.error('Error clearing localStorage:', storageError);
         }
       } finally {
-        // Add a small delay to prevent flickering
-        await new Promise(resolve => setTimeout(resolve, 100));
-        setIsLoading(false);
+        // Very short delay to prevent hydration issues
+        await new Promise(resolve => setTimeout(resolve, 50));
+        setIsInitializing(false);
       }
     };
 
     initAuth();
-  }, [initializeSocket]);
+  }, [isHydrated, initializeSocket]);
 
   const login = async (email: string, password: string) => {
     try {
-      setIsLoading(true);
+      // Don't set global isLoading during login - it causes flickering
       const response = await apiService.login(email, password);
       
       if (response.success && response.data) {
@@ -161,21 +190,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Initialize socket connection
         initializeSocket((response.data as any).accessToken);
         
-        return { success: true, message: 'Login successful' };
+        return { 
+          success: true, 
+          message: response.message || 'Login successful'
+        };
       } else {
         return { success: false, message: response.message || 'Login failed' };
       }
     } catch (error: any) {
       console.error('Login error:', error);
       return { success: false, message: error.message || 'Login failed' };
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const register = async (userData: any) => {
     try {
-      setIsLoading(true);
+      // Don't set global isLoading during register - it causes flickering
       const response = await apiService.register(userData);
       
       if (response.success && response.data) {
@@ -191,15 +221,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       console.error('Registration error:', error);
       return { success: false, message: error.message || 'Registration failed' };
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const logout = async () => {
     try {
-      setIsLoading(true);
-      
       // Disconnect socket first
       socketService.disconnect();
       setIsSocketConnected(false);
@@ -211,8 +237,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     } catch (error) {
       console.error('Logout error:', error);
+      
+      // Even if API call fails, still clear local state
+      socketService.disconnect();
+      setIsSocketConnected(false);
+      setUser(null);
     } finally {
-      setIsLoading(false);
+      // Always clear tokens and stored data regardless of API response
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+          // Also clear cookie
+          document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+      } catch (storageError) {
+        console.error('Error clearing storage during logout:', storageError);
+      }
+      
+      // Clear API service token
+      apiService.clearToken();
     }
   };
 
@@ -237,7 +282,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value: AuthContextType = {
     user,
-    isLoading,
+    isLoading: !isHydrated || isInitializing, // Show loading until hydrated and initialized
+    isInitializing,
+    isHydrated,
     isAuthenticated,
     login,
     logout,

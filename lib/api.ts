@@ -24,6 +24,8 @@ class ApiService {
     this.token = token;
     if (typeof window !== 'undefined') {
       localStorage.setItem('accessToken', token);
+      // Also set as cookie for middleware access
+      document.cookie = `accessToken=${token}; path=/; max-age=86400; secure; samesite=strict`;
     }
   }
 
@@ -32,6 +34,8 @@ class ApiService {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      // Also clear cookie
+      document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
   }
 
@@ -274,63 +278,7 @@ class ApiService {
 
   // Authentication methods
   async login(email: string, password: string) {
-    // Mock authentication for demo accounts - handle this before making any API calls
-    const demoAccounts = [
-      { email: 'superadmin@nurox.com', role: 'SUPER_ADMIN', name: 'Super Admin' },
-      { email: 'hospitaladmin@nurox.com', role: 'HOSPITAL_ADMIN', name: 'Hospital Admin' },
-      { email: 'pharmacyadmin@nurox.com', role: 'PHARMACY_ADMIN', name: 'Pharmacy Admin' },
-      { email: 'labadmin@nurox.com', role: 'LAB_ADMIN', name: 'Lab Admin' },
-      { email: 'insuranceadmin@nurox.com', role: 'INSURANCE_ADMIN', name: 'Insurance Admin' },
-      { email: 'doctor@nurox.com', role: 'DOCTOR', name: 'Dr. Michael Thompson' },
-      { email: 'pharmacist@nurox.com', role: 'PHARMACIST', name: 'PharmD Lisa Chen' },
-      { email: 'mlt@nurox.com', role: 'MLT', name: 'David Martinez' }
-    ];
-
-    const account = demoAccounts.find(acc => acc.email === email);
-    
-    // If it's a demo account, handle it with mock authentication
-    if (account) {
-      if (password !== 'admin123456') {
-        return { success: false, message: 'Invalid credentials' };
-      }
-
-      // Create mock user data
-      const mockUser = {
-        id: `user_${Date.now()}`,
-        email: account.email,
-        firstName: account.name.split(' ')[0],
-        lastName: account.name.split(' ').slice(1).join(' ') || '',
-        name: account.name, // Add the name property for the dashboard layout
-        role: account.role,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      // Create mock tokens
-      const mockAccessToken = `mock_access_token_${Date.now()}`;
-      const mockRefreshToken = `mock_refresh_token_${Date.now()}`;
-
-      // Set tokens
-      this.setToken(mockAccessToken);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('refreshToken', mockRefreshToken);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-      }
-
-      return {
-        success: true,
-        message: 'Login successful',
-        data: {
-          user: mockUser,
-          accessToken: mockAccessToken,
-          refreshToken: mockRefreshToken,
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-        }
-      };
-    }
-
-    // For non-demo accounts, make actual API call
+    // All accounts now use the API endpoint
     const response = await this.post<{
       user: any;
       accessToken: string;
@@ -387,20 +335,8 @@ class ApiService {
   }
 
   async getCurrentUser() {
-    // Mock getCurrentUser for demo mode
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        return {
-          success: true,
-          message: 'User retrieved successfully',
-          data: user
-        };
-      }
-    }
-    
-    return { success: false, message: 'No user found' };
+    // Get current user from API
+    return this.get('/auth/me');
   }
 
   // Organization management methods

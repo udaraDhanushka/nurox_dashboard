@@ -72,7 +72,7 @@ const roleNavItems: Record<string, NavItem[]> = {
   ],
 };
 
-export default function DashboardLayout({
+export default function DeprecatedDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -80,25 +80,25 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isLoading, isAuthenticated, logout } = useAuth();
+  const { user, isLoading, isHydrated, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
-    // Only redirect if auth is fully resolved and user is not authenticated
-    if (!isLoading && !isAuthenticated && !user) {
+    // Only redirect if hydrated, auth is fully resolved and user is not authenticated
+    if (isHydrated && !isLoading && !isAuthenticated && !user) {
       // Add a small delay to prevent race conditions
       setTimeout(() => {
         router.push('/login');
       }, 100);
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isHydrated, isLoading, isAuthenticated, user, router]);
 
   const handleLogout = async () => {
     await logout();
     router.push('/login');
   };
 
-  // Show loading state while auth is being determined
-  if (isLoading) {
+  // Show loading state while hydrating or auth is being determined
+  if (!isHydrated || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -118,7 +118,7 @@ export default function DashboardLayout({
   const navItems = roleNavItems[user?.role] || [];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className={`min-h-screen bg-gray-100 hydration-safe ${isHydrated ? 'hydrated' : ''}`}>
       {/* Sidebar */}
       <aside
         className={cn(

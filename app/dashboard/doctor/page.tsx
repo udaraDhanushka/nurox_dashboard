@@ -1,5 +1,6 @@
 'use client';
 
+import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import { useState, useEffect } from 'react';
 import { Calendar, Users, FileText, Beaker } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/stats-card';
@@ -40,13 +41,14 @@ export default function DoctorDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">
-          Welcome back! Here&apos;s an overview of your practice today.
-        </p>
-      </div>
+    <DashboardLayout role="doctor">
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="text-muted-foreground">
+            Welcome back! Here&apos;s an overview of your practice today.
+          </p>
+        </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
@@ -147,6 +149,7 @@ export default function DoctorDashboard() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 } 

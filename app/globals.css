@@ -80,3 +80,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Prevent flash during hydration */
+.hydration-safe {
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.hydration-safe.hydrated {
+  opacity: 1;
+}

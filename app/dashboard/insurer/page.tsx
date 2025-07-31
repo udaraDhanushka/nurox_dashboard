@@ -1,5 +1,6 @@
 'use client';
 
+import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import { useState, useEffect } from 'react';
 import { FileText, DollarSign, Users, Clock } from 'lucide-react';
 import { StatsCard } from '@/components/dashboard/stats-card';
@@ -38,13 +39,14 @@ export default function InsurerDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Insurance Dashboard</h2>
-        <p className="text-muted-foreground">
-          Monitor and process insurance claims.
-        </p>
-      </div>
+    <DashboardLayout role="insurer">
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Insurance Dashboard</h2>
+          <p className="text-muted-foreground">
+            Monitor and process insurance claims.
+          </p>
+        </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
@@ -129,6 +131,7 @@ export default function InsurerDashboard() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 } 
