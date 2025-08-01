@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/lib/auth-context';
@@ -38,7 +38,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  XCircle
+  XCircle,
 } from 'lucide-react';
 
 interface Organization {
@@ -70,7 +70,9 @@ export default function SuperAdminDashboard() {
   const [organizations, setOrganizations] = useState<OrganizationsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [createType, setCreateType] = useState<'hospital' | 'pharmacy' | 'laboratory' | 'insurance'>('hospital');
+  const [createType, setCreateType] = useState<
+    'hospital' | 'pharmacy' | 'laboratory' | 'insurance'
+  >('hospital');
   const [formData, setFormData] = useState<any>({});
   const [notifications, setNotifications] = useState<any[]>([]);
 
@@ -124,7 +126,7 @@ export default function SuperAdminDashboard() {
   const handleCreateOrganization = async () => {
     try {
       let response;
-      
+
       switch (createType) {
         case 'hospital':
           response = await apiService.createHospital(formData);
@@ -141,7 +143,9 @@ export default function SuperAdminDashboard() {
       }
 
       if (response?.success) {
-        toast.success(`${createType.charAt(0).toUpperCase() + createType.slice(1)} created successfully`);
+        toast.success(
+          `${createType.charAt(0).toUpperCase() + createType.slice(1)} created successfully`
+        );
         setShowCreateDialog(false);
         setFormData({});
         loadOrganizations();
@@ -168,11 +172,26 @@ export default function SuperAdminDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return <Badge variant="default" className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" />Active</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-500">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Active
+          </Badge>
+        );
       case 'PENDING_APPROVAL':
-        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+        return (
+          <Badge variant="secondary">
+            <Clock className="w-3 h-3 mr-1" />
+            Pending
+          </Badge>
+        );
       case 'SUSPENDED':
-        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Suspended</Badge>;
+        return (
+          <Badge variant="destructive">
+            <XCircle className="w-3 h-3 mr-1" />
+            Suspended
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -180,29 +199,38 @@ export default function SuperAdminDashboard() {
 
   const CreateOrganizationForm = useMemo(() => {
     const handleSpecialtiesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const specialties = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-      setFormData((prev: any) => ({ 
-        ...prev, 
+      const specialties = e.target.value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      setFormData((prev: any) => ({
+        ...prev,
         specialtiesText: e.target.value,
-        specialties 
+        specialties,
       }));
     };
 
     const handleTestTypesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const testTypes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-      setFormData((prev: any) => ({ 
-        ...prev, 
+      const testTypes = e.target.value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      setFormData((prev: any) => ({
+        ...prev,
         testTypesText: e.target.value,
-        testTypes 
+        testTypes,
       }));
     };
 
     const handleCoverageTypesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const coverageTypes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-      setFormData((prev: any) => ({ 
-        ...prev, 
+      const coverageTypes = e.target.value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      setFormData((prev: any) => ({
+        ...prev,
         coverageTypesText: e.target.value,
-        coverageTypes 
+        coverageTypes,
       }));
     };
 
@@ -228,7 +256,7 @@ export default function SuperAdminDashboard() {
           <Input
             id="name"
             value={formData.name || ''}
-            onChange={(e) => updateFormField('name', e.target.value)}
+            onChange={e => updateFormField('name', e.target.value)}
             placeholder={`Enter ${createType} name`}
           />
         </div>
@@ -238,7 +266,7 @@ export default function SuperAdminDashboard() {
           <Input
             id="registrationNumber"
             value={formData.registrationNumber || ''}
-            onChange={(e) => updateFormField('registrationNumber', e.target.value)}
+            onChange={e => updateFormField('registrationNumber', e.target.value)}
             placeholder="Enter registration number"
           />
         </div>
@@ -248,7 +276,7 @@ export default function SuperAdminDashboard() {
           <Input
             id="licenseNumber"
             value={formData.licenseNumber || ''}
-            onChange={(e) => updateFormField('licenseNumber', e.target.value)}
+            onChange={e => updateFormField('licenseNumber', e.target.value)}
             placeholder="Enter license number"
           />
         </div>
@@ -258,7 +286,7 @@ export default function SuperAdminDashboard() {
           <Textarea
             id="address"
             value={formData.address || ''}
-            onChange={(e) => updateFormField('address', e.target.value)}
+            onChange={e => updateFormField('address', e.target.value)}
             placeholder="Enter address"
           />
         </div>
@@ -269,7 +297,7 @@ export default function SuperAdminDashboard() {
             <Input
               id="phone"
               value={formData.phone || ''}
-              onChange={(e) => updateFormField('phone', e.target.value)}
+              onChange={e => updateFormField('phone', e.target.value)}
               placeholder="Phone number"
             />
           </div>
@@ -279,7 +307,7 @@ export default function SuperAdminDashboard() {
               id="email"
               type="email"
               value={formData.email || ''}
-              onChange={(e) => updateFormField('email', e.target.value)}
+              onChange={e => updateFormField('email', e.target.value)}
               placeholder="Email address"
             />
           </div>
@@ -290,7 +318,7 @@ export default function SuperAdminDashboard() {
           <Input
             id="contactPerson"
             value={formData.contactPerson || ''}
-            onChange={(e) => updateFormField('contactPerson', e.target.value)}
+            onChange={e => updateFormField('contactPerson', e.target.value)}
             placeholder="Contact person name"
           />
         </div>
@@ -312,7 +340,7 @@ export default function SuperAdminDashboard() {
                 id="bedCount"
                 type="number"
                 value={formData.bedCount || ''}
-                onChange={(e) => updateFormField('bedCount', parseInt(e.target.value) || 0)}
+                onChange={e => updateFormField('bedCount', parseInt(e.target.value) || 0)}
                 placeholder="Number of beds"
               />
             </div>
@@ -372,18 +400,14 @@ export default function SuperAdminDashboard() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Create New Organization</DialogTitle>
-              <DialogDescription>
-                Add a new organization to the Nurox system
-              </DialogDescription>
+              <DialogDescription>Add a new organization to the Nurox system</DialogDescription>
             </DialogHeader>
             {CreateOrganizationForm}
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => handleDialogClose(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreateOrganization}>
-                Create
-              </Button>
+              <Button onClick={handleCreateOrganization}>Create</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -398,9 +422,7 @@ export default function SuperAdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{organizations?.summary.totalHospitals || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Healthcare facilities
-            </p>
+            <p className="text-xs text-muted-foreground">Healthcare facilities</p>
           </CardContent>
         </Card>
 
@@ -411,9 +433,7 @@ export default function SuperAdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{organizations?.summary.totalPharmacies || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Medication dispensers
-            </p>
+            <p className="text-xs text-muted-foreground">Medication dispensers</p>
           </CardContent>
         </Card>
 
@@ -423,10 +443,10 @@ export default function SuperAdminDashboard() {
             <TestTube className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{organizations?.summary.totalLaboratories || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Testing facilities
-            </p>
+            <div className="text-2xl font-bold">
+              {organizations?.summary.totalLaboratories || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">Testing facilities</p>
           </CardContent>
         </Card>
 
@@ -436,10 +456,10 @@ export default function SuperAdminDashboard() {
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{organizations?.summary.totalInsuranceCompanies || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Coverage providers
-            </p>
+            <div className="text-2xl font-bold">
+              {organizations?.summary.totalInsuranceCompanies || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">Coverage providers</p>
           </CardContent>
         </Card>
       </div>
@@ -483,12 +503,16 @@ export default function SuperAdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {organizations?.hospitals.map((hospital) => (
-                  <div key={hospital.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {organizations?.hospitals.map(hospital => (
+                  <div
+                    key={hospital.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <h3 className="font-semibold">{hospital.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {hospital._count?.users || 0} users • Created {new Date(hospital.createdAt).toLocaleDateString()}
+                        {hospital._count?.users || 0} users • Created{' '}
+                        {new Date(hospital.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -515,12 +539,15 @@ export default function SuperAdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {organizations?.pharmacies.map((pharmacy) => (
-                  <div key={pharmacy.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {organizations?.pharmacies.map(pharmacy => (
+                  <div
+                    key={pharmacy.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <h3 className="font-semibold">{pharmacy.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {pharmacy._count?.users || 0} users • 
+                        {pharmacy._count?.users || 0} users •
                         {pharmacy.hospitalId && ' Hospital-owned • '}
                         Created {new Date(pharmacy.createdAt).toLocaleDateString()}
                       </p>
@@ -549,13 +576,15 @@ export default function SuperAdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {organizations?.laboratories.map((lab) => (
-                  <div key={lab.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {organizations?.laboratories.map(lab => (
+                  <div
+                    key={lab.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <h3 className="font-semibold">{lab.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {lab._count?.users || 0} users • 
-                        {lab.hospitalId && ' Hospital-owned • '}
+                        {lab._count?.users || 0} users •{lab.hospitalId && ' Hospital-owned • '}
                         Created {new Date(lab.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -583,12 +612,16 @@ export default function SuperAdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {organizations?.insuranceCompanies.map((insurance) => (
-                  <div key={insurance.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {organizations?.insuranceCompanies.map(insurance => (
+                  <div
+                    key={insurance.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex-1">
                       <h3 className="font-semibold">{insurance.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {insurance._count?.users || 0} users • Created {new Date(insurance.createdAt).toLocaleDateString()}
+                        {insurance._count?.users || 0} users • Created{' '}
+                        {new Date(insurance.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -600,7 +633,9 @@ export default function SuperAdminDashboard() {
                   </div>
                 ))}
                 {organizations?.insuranceCompanies.length === 0 && (
-                  <p className="text-center text-muted-foreground py-8">No insurance companies found</p>
+                  <p className="text-center text-muted-foreground py-8">
+                    No insurance companies found
+                  </p>
                 )}
               </div>
             </CardContent>

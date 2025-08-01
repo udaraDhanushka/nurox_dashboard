@@ -79,7 +79,7 @@ export default function OrderPage() {
 
       // Here you would typically send the order to your backend
       console.log('Placing order:', orderItems);
-      
+
       toast.success('Order placed successfully');
       // Reset selection after successful order
       setSelectedItems([]);
@@ -94,7 +94,10 @@ export default function OrderPage() {
 
   const totalItems = selectedItems.length;
   const totalUnits = selectedItems.reduce((sum, itemId) => {
-    return sum + (orderQuantities[itemId] || lowStockItems.find(i => i.id === itemId)?.recommendedOrder || 0);
+    return (
+      sum +
+      (orderQuantities[itemId] || lowStockItems.find(i => i.id === itemId)?.recommendedOrder || 0)
+    );
   }, 0);
 
   return (
@@ -159,7 +162,7 @@ export default function OrderPage() {
                 <TableHead className="w-12">
                   <Checkbox
                     checked={selectedItems.length === lowStockItems.length}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={checked => {
                       if (checked) {
                         setSelectedItems(lowStockItems.map(item => item.id));
                       } else {
@@ -178,7 +181,7 @@ export default function OrderPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lowStockItems.map((item) => (
+              {lowStockItems.map(item => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <Checkbox
@@ -194,14 +197,16 @@ export default function OrderPage() {
                       {item.currentStock} {item.unit}
                     </span>
                   </TableCell>
-                  <TableCell>{item.reorderPoint} {item.unit}</TableCell>
+                  <TableCell>
+                    {item.reorderPoint} {item.unit}
+                  </TableCell>
                   <TableCell>{item.supplier}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Input
                         type="number"
                         value={orderQuantities[item.id] || item.recommendedOrder}
-                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                        onChange={e => handleQuantityChange(item.id, e.target.value)}
                         className="w-24"
                       />
                       <span className="text-sm text-muted-foreground">{item.unit}</span>
@@ -214,9 +219,7 @@ export default function OrderPage() {
 
           <div className="mt-6 flex justify-end space-x-2">
             <Button variant="outline" asChild>
-              <Link href="/dashboard/pharmacy/inventory">
-                Cancel
-              </Link>
+              <Link href="/dashboard/pharmacy/inventory">Cancel</Link>
             </Button>
             <Button
               onClick={handlePlaceOrder}
@@ -236,4 +239,4 @@ export default function OrderPage() {
       </Card>
     </div>
   );
-} 
+}

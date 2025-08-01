@@ -10,15 +10,15 @@ export async function GET() {
           name: 'General Hospital',
           status: 'ACTIVE',
           createdAt: '2024-01-15T09:00:00Z',
-          _count: { users: 45 }
+          _count: { users: 45 },
         },
         {
           id: '2',
           name: 'City Medical Center',
           status: 'ACTIVE',
           createdAt: '2024-02-20T10:30:00Z',
-          _count: { users: 32 }
-        }
+          _count: { users: 32 },
+        },
       ],
       pharmacies: [
         {
@@ -26,7 +26,7 @@ export async function GET() {
           name: 'Central Pharmacy',
           status: 'ACTIVE',
           createdAt: '2024-01-10T08:00:00Z',
-          _count: { users: 12 }
+          _count: { users: 12 },
         },
         {
           id: '2',
@@ -34,8 +34,8 @@ export async function GET() {
           status: 'ACTIVE',
           createdAt: '2024-03-05T14:20:00Z',
           _count: { users: 8 },
-          hospitalId: '1'
-        }
+          hospitalId: '1',
+        },
       ],
       laboratories: [
         {
@@ -43,7 +43,7 @@ export async function GET() {
           name: 'Diagnostic Lab',
           status: 'ACTIVE',
           createdAt: '2024-01-25T11:00:00Z',
-          _count: { users: 18 }
+          _count: { users: 18 },
         },
         {
           id: '2',
@@ -51,8 +51,8 @@ export async function GET() {
           status: 'PENDING_APPROVAL',
           createdAt: '2024-03-10T16:45:00Z',
           _count: { users: 5 },
-          hospitalId: '2'
-        }
+          hospitalId: '2',
+        },
       ],
       insuranceCompanies: [
         {
@@ -60,34 +60,37 @@ export async function GET() {
           name: 'Health Insurance Co.',
           status: 'ACTIVE',
           createdAt: '2024-02-01T09:15:00Z',
-          _count: { users: 25 }
+          _count: { users: 25 },
         },
         {
           id: '2',
           name: 'MediCare Plus',
           status: 'ACTIVE',
           createdAt: '2024-02-15T13:30:00Z',
-          _count: { users: 15 }
-        }
+          _count: { users: 15 },
+        },
       ],
       summary: {
         totalHospitals: 2,
         totalPharmacies: 2,
         totalLaboratories: 2,
-        totalInsuranceCompanies: 2
-      }
+        totalInsuranceCompanies: 2,
+      },
     };
 
     return NextResponse.json({
       success: true,
       message: 'Organizations retrieved successfully',
-      data: organizationsData
+      data: organizationsData,
     });
   } catch (error) {
     console.error('Error fetching organizations:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Failed to fetch organizations'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to fetch organizations',
+      },
+      { status: 500 }
+    );
   }
 }

@@ -105,13 +105,13 @@ export default function PrescriptionsPage() {
   };
 
   const filteredPrescriptions = prescriptions.filter(prescription => {
-    const matchesSearch = 
+    const matchesSearch =
       prescription.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
       prescription.medication.toLowerCase().includes(searchTerm.toLowerCase()) ||
       prescription.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || prescription.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -137,7 +137,7 @@ export default function PrescriptionsPage() {
                   placeholder="Search prescriptions..."
                   className="pl-8 md:w-[300px]"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -171,7 +171,7 @@ export default function PrescriptionsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPrescriptions.map((prescription) => (
+              {filteredPrescriptions.map(prescription => (
                 <TableRow key={prescription.id}>
                   <TableCell className="font-medium">{prescription.id}</TableCell>
                   <TableCell>{prescription.patient}</TableCell>
@@ -185,8 +185,8 @@ export default function PrescriptionsPage() {
                         prescription.status === 'Ready'
                           ? 'bg-green-100 text-green-800'
                           : prescription.status === 'Processing'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-red-100 text-red-800'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-red-100 text-red-800'
                       }`}
                     >
                       {prescription.status}
@@ -194,8 +194,8 @@ export default function PrescriptionsPage() {
                   </TableCell>
                   <TableCell>{prescription.date}</TableCell>
                   <TableCell>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleUpdateStatus(prescription)}
                     >
@@ -224,10 +224,18 @@ export default function PrescriptionsPage() {
             <div className="space-y-2">
               <Label>Prescription Details</Label>
               <div className="text-sm">
-                <p><strong>ID:</strong> {selectedPrescription?.id}</p>
-                <p><strong>Patient:</strong> {selectedPrescription?.patient}</p>
-                <p><strong>Medication:</strong> {selectedPrescription?.medication}</p>
-                <p><strong>Current Status:</strong> {selectedPrescription?.status}</p>
+                <p>
+                  <strong>ID:</strong> {selectedPrescription?.id}
+                </p>
+                <p>
+                  <strong>Patient:</strong> {selectedPrescription?.patient}
+                </p>
+                <p>
+                  <strong>Medication:</strong> {selectedPrescription?.medication}
+                </p>
+                <p>
+                  <strong>Current Status:</strong> {selectedPrescription?.status}
+                </p>
               </div>
             </div>
             <div className="space-y-2">
@@ -251,7 +259,7 @@ export default function PrescriptionsPage() {
                 id="notes"
                 placeholder="Add any notes about this status update"
                 value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                onChange={e => setNotes(e.target.value)}
               />
             </div>
           </div>
@@ -259,10 +267,7 @@ export default function PrescriptionsPage() {
             <Button variant="outline" onClick={() => setShowUpdateModal(false)}>
               Cancel
             </Button>
-            <Button 
-              onClick={handleSaveStatus}
-              disabled={isUpdatingStatus}
-            >
+            <Button onClick={handleSaveStatus} disabled={isUpdatingStatus}>
               {isUpdatingStatus ? (
                 <>
                   <span className="mr-2">Updating...</span>
@@ -277,4 +282,4 @@ export default function PrescriptionsPage() {
       </Dialog>
     </div>
   );
-} 
+}

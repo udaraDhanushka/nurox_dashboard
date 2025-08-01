@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { io, Socket } from 'socket.io-client';
 
@@ -13,7 +13,7 @@ class SocketService {
 
     // Check if we're using mock authentication
     const isMockAuth = token && token.startsWith('mock_');
-    
+
     if (isMockAuth) {
       // Create a mock socket for demo mode
       this.socket = {
@@ -27,9 +27,9 @@ class SocketService {
           }
         },
         onAny: () => {},
-        emit: () => {}
+        emit: () => {},
       } as any;
-      
+
       // Simulate successful connection
       setTimeout(() => {
         if (this.socket) {
@@ -39,34 +39,34 @@ class SocketService {
           }
         }
       }, 100);
-      
+
       return this.socket;
     }
 
     const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
-    
+
     this.socket = io(socketURL, {
       auth: {
-        token
+        token,
       },
       transports: ['websocket', 'polling'],
       timeout: 20000,
-      forceNew: true
+      forceNew: true,
     });
 
     this.socket.on('connect', () => {
       console.log('Connected to server');
     });
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', reason => {
       console.log('Disconnected from server:', reason);
-      
+
       // Auto-reconnect on network issues
       if (reason === 'io server disconnect') {
         // Server initiated disconnect, don't auto-reconnect
         return;
       }
-      
+
       // Client side issue, auto-reconnect
       setTimeout(() => {
         if (this.socket && !this.socket.connected) {
@@ -75,12 +75,14 @@ class SocketService {
       }, 1000);
     });
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on('connect_error', error => {
       console.error('Connection error:', error);
-      
-      if (error.message === 'Authentication failed' || 
-          error.message === 'Authentication token required' ||
-          error.message === 'Invalid or expired token') {
+
+      if (
+        error.message === 'Authentication failed' ||
+        error.message === 'Authentication token required' ||
+        error.message === 'Invalid or expired token'
+      ) {
         // Authentication error, redirect to login
         this.disconnect();
         if (typeof window !== 'undefined') {

@@ -17,18 +17,27 @@ export default function Home() {
     if (isHydrated && !isLoading && isAuthenticated && user) {
       const getRoleDashboardPath = (role: string) => {
         switch (role) {
-          case 'SUPER_ADMIN': return '/dashboard/admin';
-          case 'HOSPITAL_ADMIN': return '/dashboard/hospital';
-          case 'PHARMACY_ADMIN': return '/dashboard/pharmacy';
-          case 'LAB_ADMIN': return '/dashboard/lab';
-          case 'INSURANCE_ADMIN': return '/dashboard/insurer';
-          case 'DOCTOR': return '/dashboard/doctor';
-          case 'PHARMACIST': return '/dashboard/pharmacist';
-          case 'MLT': return '/dashboard/mlt';
-          default: return '/dashboard';
+          case 'SUPER_ADMIN':
+            return '/dashboard/admin';
+          case 'HOSPITAL_ADMIN':
+            return '/dashboard/hospital';
+          case 'PHARMACY_ADMIN':
+            return '/dashboard/pharmacy';
+          case 'LAB_ADMIN':
+            return '/dashboard/lab';
+          case 'INSURANCE_ADMIN':
+            return '/dashboard/insurer';
+          case 'DOCTOR':
+            return '/dashboard/doctor';
+          case 'PHARMACIST':
+            return '/dashboard/pharmacist';
+          case 'MLT':
+            return '/dashboard/mlt';
+          default:
+            return '/dashboard';
         }
       };
-      
+
       const dashboardPath = getRoleDashboardPath(user.role);
       router.push(dashboardPath);
     }
@@ -54,7 +63,7 @@ export default function Home() {
             </div>
             <h1 className="text-2xl font-bold text-primary">Nurox</h1>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <Link href="/login">
               <Button>Log in</Button>
@@ -71,7 +80,8 @@ export default function Home() {
               Seamless Healthcare Management Platform
             </h2>
             <p className="text-xl text-gray-600">
-              Connect doctors, pharmacies, labs, and insurers in one integrated system for efficient healthcare service delivery.
+              Connect doctors, pharmacies, labs, and insurers in one integrated system for efficient
+              healthcare service delivery.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link href="/login">
@@ -87,10 +97,10 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          
+
           <div className="relative h-[500px] w-full">
-            <Image 
-              src="/assets/images/health.png" 
+            <Image
+              src="/assets/images/health.png"
               alt="Healthcare Management Platform"
               fill
               priority
@@ -99,14 +109,16 @@ export default function Home() {
             />
           </div>
         </main>
-        
+
         <section className="py-16 md:py-24">
-          <h3 className="text-2xl font-semibold text-center mb-12">Trusted by Healthcare Providers</h3>
+          <h3 className="text-2xl font-semibold text-center mb-12">
+            Trusted by Healthcare Providers
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4].map(i => (
               <div key={i} className="h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Image 
-                  src={`/assets/images/logo${i}.png`} 
+                <Image
+                  src={`/assets/images/logo${i}.png`}
                   alt={`Healthcare Logo ${i}`}
                   width={400}
                   height={80}
@@ -117,7 +129,7 @@ export default function Home() {
           </div>
         </section>
       </div>
-      
+
       <footer className="bg-gray-50 py-8 mt-10">
         <div className="max-w-[1600px] mx-auto px-2 text-center text-gray-500">
           <p>© 2025 Nurox. All rights reserved.</p>

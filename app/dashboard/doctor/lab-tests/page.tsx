@@ -13,12 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Link from 'next/link';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Mock data
 const labTests = [
@@ -54,11 +49,13 @@ export default function LabTestsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredTests = labTests.filter(test => {
-    const matchesSearch = test.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         test.testType.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTab = activeTab === 'all' || 
-                      (activeTab === 'pending' && test.status === 'Pending') ||
-                      (activeTab === 'completed' && test.status === 'Completed');
+    const matchesSearch =
+      test.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      test.testType.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTab =
+      activeTab === 'all' ||
+      (activeTab === 'pending' && test.status === 'Pending') ||
+      (activeTab === 'completed' && test.status === 'Completed');
     return matchesSearch && matchesTab;
   });
 
@@ -91,13 +88,13 @@ export default function LabTestsPage() {
               placeholder="Search tests..."
               className="pl-8 w-full sm:w-[300px]"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
         <TabsContent value="all" className="space-y-4">
-          {filteredTests.map((test) => (
+          {filteredTests.map(test => (
             <Card key={test.id}>
               <CardContent className="p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -105,9 +102,7 @@ export default function LabTestsPage() {
                     <Beaker className="h-8 w-8 text-gray-400" />
                     <div>
                       <p className="font-medium">{test.patient}</p>
-                      <div className="text-sm text-muted-foreground">
-                        {test.testType}
-                      </div>
+                      <div className="text-sm text-muted-foreground">{test.testType}</div>
                       <div className="flex items-center text-sm text-muted-foreground mt-1">
                         <Clock className="mr-1 h-4 w-4" />
                         Ordered: {test.orderedDate}
@@ -129,8 +124,8 @@ export default function LabTestsPage() {
                         test.status === 'Completed'
                           ? 'bg-green-100 text-green-800'
                           : test.status === 'In Progress'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                       }`}
                     >
                       {test.status}
@@ -161,4 +156,4 @@ export default function LabTestsPage() {
       </Tabs>
     </div>
   );
-} 
+}

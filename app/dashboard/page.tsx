@@ -9,7 +9,7 @@ export default function DashboardPage() {
   useEffect(() => {
     // Get user data from localStorage
     const userData = localStorage.getItem('user');
-    
+
     if (!userData) {
       // If no user data is found, redirect to login
       router.replace('/login');

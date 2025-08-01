@@ -89,11 +89,7 @@ export default function NewPrescription() {
             </div>
 
             <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
+              <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
@@ -105,4 +101,4 @@ export default function NewPrescription() {
       </Card>
     </div>
   );
-} 
+}

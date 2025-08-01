@@ -80,7 +80,7 @@ export default function PatientsPage() {
                   placeholder="Search patients..."
                   className="pl-8"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function PatientsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPatients.map((patient) => (
+              {filteredPatients.map(patient => (
                 <TableRow key={patient.id}>
                   <TableCell className="font-medium">{patient.name}</TableCell>
                   <TableCell>{patient.age}</TableCell>
@@ -137,4 +137,4 @@ export default function PatientsPage() {
       </Card>
     </div>
   );
-} 
+}

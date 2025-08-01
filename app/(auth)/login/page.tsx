@@ -28,18 +28,27 @@ export default function LoginPage() {
     if (isHydrated && !isLoading && isAuthenticated && user) {
       const getRoleDashboardPath = (role: string) => {
         switch (role) {
-          case 'SUPER_ADMIN': return '/dashboard/admin';
-          case 'HOSPITAL_ADMIN': return '/dashboard/hospital';
-          case 'PHARMACY_ADMIN': return '/dashboard/pharmacy';
-          case 'LAB_ADMIN': return '/dashboard/lab';
-          case 'INSURANCE_ADMIN': return '/dashboard/insurer';
-          case 'DOCTOR': return '/dashboard/doctor';
-          case 'PHARMACIST': return '/dashboard/pharmacist';
-          case 'MLT': return '/dashboard/mlt';
-          default: return '/dashboard';
+          case 'SUPER_ADMIN':
+            return '/dashboard/admin';
+          case 'HOSPITAL_ADMIN':
+            return '/dashboard/hospital';
+          case 'PHARMACY_ADMIN':
+            return '/dashboard/pharmacy';
+          case 'LAB_ADMIN':
+            return '/dashboard/lab';
+          case 'INSURANCE_ADMIN':
+            return '/dashboard/insurer';
+          case 'DOCTOR':
+            return '/dashboard/doctor';
+          case 'PHARMACIST':
+            return '/dashboard/pharmacist';
+          case 'MLT':
+            return '/dashboard/mlt';
+          default:
+            return '/dashboard';
         }
       };
-      
+
       const dashboardPath = getRoleDashboardPath(user.role);
       router.push(dashboardPath);
     }

@@ -12,11 +12,26 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
-import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
+import {
+  format,
+  addDays,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  isSameDay,
+} from 'date-fns';
 import { parse } from 'date-fns/parse';
 import { getDay } from 'date-fns/getDay';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
@@ -117,51 +132,25 @@ const CustomToolbar = ({ date, onNavigate, view, onView }: any) => {
   return (
     <div className="flex justify-between items-center mb-4">
       <div className="flex items-center gap-2">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={goToToday}
-        >
+        <Button variant="outline" size="sm" onClick={goToToday}>
           Today
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={goToBack}
-        >
+        <Button variant="outline" size="sm" onClick={goToBack}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={goToNext}
-        >
+        <Button variant="outline" size="sm" onClick={goToNext}>
           <ChevronRight className="h-4 w-4" />
         </Button>
-        <span className="text-lg font-semibold ml-2">
-          {dateRange()}
-        </span>
+        <span className="text-lg font-semibold ml-2">{dateRange()}</span>
       </div>
       <div className="flex gap-2">
-        <Button 
-          variant={view === 'month' ? 'default' : 'outline'}
-          size="sm"
-          onClick={goToMonth}
-        >
+        <Button variant={view === 'month' ? 'default' : 'outline'} size="sm" onClick={goToMonth}>
           Month
         </Button>
-        <Button 
-          variant={view === 'week' ? 'default' : 'outline'}
-          size="sm"
-          onClick={goToWeek}
-        >
+        <Button variant={view === 'week' ? 'default' : 'outline'} size="sm" onClick={goToWeek}>
           Week
         </Button>
-        <Button 
-          variant={view === 'day' ? 'default' : 'outline'}
-          size="sm"
-          onClick={goToDay}
-        >
+        <Button variant={view === 'day' ? 'default' : 'outline'} size="sm" onClick={goToDay}>
           Day
         </Button>
       </div>
@@ -196,9 +185,12 @@ export default function AppointmentsPage() {
       end: addMinutes(appointment.time, appointment.duration),
       resource: appointment,
       style: {
-        backgroundColor: appointment.status === 'Completed' ? '#22c55e' :
-                        appointment.status === 'Upcoming' ? '#3b82f6' :
-                        '#ef4444',
+        backgroundColor:
+          appointment.status === 'Completed'
+            ? '#22c55e'
+            : appointment.status === 'Upcoming'
+              ? '#3b82f6'
+              : '#ef4444',
         borderColor: 'transparent',
       },
     }));
@@ -265,7 +257,7 @@ export default function AppointmentsPage() {
                 timeslots={2}
                 selectable={false}
                 components={{
-                  toolbar: CustomToolbar
+                  toolbar: CustomToolbar,
                 }}
               />
             </div>
@@ -297,50 +289,48 @@ export default function AppointmentsPage() {
                   if (filter === 'all') return true;
                   return appointment.status.toLowerCase() === filter.toLowerCase();
                 })
-                .map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
-                >
-                  <div className="flex items-center space-x-4">
-                    <User className="h-8 w-8 text-gray-400" />
-                    <div>
-                      <p className="font-medium">{appointment.patient}</p>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="mr-1 h-4 w-4" />
-                        {format(appointment.time, 'hh:mm a')} - {appointment.type}
+                .map(appointment => (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <User className="h-8 w-8 text-gray-400" />
+                      <div>
+                        <p className="font-medium">{appointment.patient}</p>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Clock className="mr-1 h-4 w-4" />
+                          {format(appointment.time, 'hh:mm a')} - {appointment.type}
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center space-x-2">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          appointment.status === 'Completed'
+                            ? 'bg-green-100 text-green-800'
+                            : appointment.status === 'Upcoming'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {appointment.status}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAppointment(appointment);
+                          setShowAppointmentModal(true);
+                        }}
+                      >
+                        View Details
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        appointment.status === 'Completed'
-                          ? 'bg-green-100 text-green-800'
-                          : appointment.status === 'Upcoming'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {appointment.status}
-                    </span>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => {
-                        setSelectedAppointment(appointment);
-                        setShowAppointmentModal(true);
-                      }}
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                ))}
               {appointmentsList.length === 0 && (
-                <div className="text-center py-4 text-muted-foreground">
-                  No appointments found.
-                </div>
+                <div className="text-center py-4 text-muted-foreground">No appointments found.</div>
               )}
             </div>
           </CardContent>
@@ -378,8 +368,8 @@ export default function AppointmentsPage() {
                     selectedAppointment.status === 'Completed'
                       ? 'bg-green-100 text-green-800'
                       : selectedAppointment.status === 'Upcoming'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-red-100 text-red-800'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-red-100 text-red-800'
                   }`}
                 >
                   {selectedAppointment.status}
@@ -392,10 +382,7 @@ export default function AppointmentsPage() {
             </div>
           )}
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowAppointmentModal(false)}
-            >
+            <Button variant="outline" onClick={() => setShowAppointmentModal(false)}>
               Close
             </Button>
           </DialogFooter>
@@ -403,4 +390,4 @@ export default function AppointmentsPage() {
       </Dialog>
     </div>
   );
-} 
+}

@@ -52,7 +52,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               </div>
               <CardTitle>Something went wrong</CardTitle>
               <CardDescription>
-                An error occurred while loading this page. Please try refreshing or contact support if the problem persists.
+                An error occurred while loading this page. Please try refreshing or contact support
+                if the problem persists.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">

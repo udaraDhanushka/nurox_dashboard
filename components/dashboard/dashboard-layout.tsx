@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import {
   Bell,
   Calendar,
@@ -20,16 +20,12 @@ import {
   ShieldCheck,
   Package,
   Activity,
-  Calculator
-} from "lucide-react";
+  Calculator,
+} from 'lucide-react';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetTrigger 
-} from "@/components/ui/sheet";
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,8 +33,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface SidebarItem {
   icon: React.ReactNode;
@@ -49,120 +45,372 @@ interface SidebarItem {
 // Define sidebar items for each role
 const sidebarItemsByRole: Record<string, SidebarItem[]> = {
   DOCTOR: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/doctor" },
-    { icon: <Calendar className="h-5 w-5" />, label: "Appointments", href: "/dashboard/doctor/appointments" },
-    { icon: <User className="h-5 w-5" />, label: "Patients", href: "/dashboard/doctor/patients" },
-    { icon: <FileText className="h-5 w-5" />, label: "Prescriptions", href: "/dashboard/doctor/prescriptions" },
-    { icon: <TestTube className="h-5 w-5" />, label: "Lab Tests", href: "/dashboard/doctor/lab-tests" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/doctor/messages" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/doctor' },
+    {
+      icon: <Calendar className="h-5 w-5" />,
+      label: 'Appointments',
+      href: '/dashboard/doctor/appointments',
+    },
+    { icon: <User className="h-5 w-5" />, label: 'Patients', href: '/dashboard/doctor/patients' },
+    {
+      icon: <FileText className="h-5 w-5" />,
+      label: 'Prescriptions',
+      href: '/dashboard/doctor/prescriptions',
+    },
+    {
+      icon: <TestTube className="h-5 w-5" />,
+      label: 'Lab Tests',
+      href: '/dashboard/doctor/lab-tests',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/doctor/messages',
+    },
   ],
   PATIENT: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/patient" },
-    { icon: <Calendar className="h-5 w-5" />, label: "Appointments", href: "/dashboard/patient/appointments" },
-    { icon: <FileText className="h-5 w-5" />, label: "Prescriptions", href: "/dashboard/patient/prescriptions" },
-    { icon: <TestTube className="h-5 w-5" />, label: "Lab Results", href: "/dashboard/patient/lab-results" },
-    { icon: <ShieldCheck className="h-5 w-5" />, label: "Insurance", href: "/dashboard/patient/insurance" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/patient/messages" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/patient',
+    },
+    {
+      icon: <Calendar className="h-5 w-5" />,
+      label: 'Appointments',
+      href: '/dashboard/patient/appointments',
+    },
+    {
+      icon: <FileText className="h-5 w-5" />,
+      label: 'Prescriptions',
+      href: '/dashboard/patient/prescriptions',
+    },
+    {
+      icon: <TestTube className="h-5 w-5" />,
+      label: 'Lab Results',
+      href: '/dashboard/patient/lab-results',
+    },
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      label: 'Insurance',
+      href: '/dashboard/patient/insurance',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/patient/messages',
+    },
   ],
   PHARMACIST: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/pharmacist" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Prescriptions", href: "/dashboard/pharmacist/prescriptions" },
-    { icon: <Package className="h-5 w-5" />, label: "Inventory", href: "/dashboard/pharmacist/inventory" },
-    { icon: <Users className="h-5 w-5" />, label: "Patients", href: "/dashboard/pharmacist/patients" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/pharmacist/messages" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/pharmacist',
+    },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Prescriptions',
+      href: '/dashboard/pharmacist/prescriptions',
+    },
+    {
+      icon: <Package className="h-5 w-5" />,
+      label: 'Inventory',
+      href: '/dashboard/pharmacist/inventory',
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'Patients',
+      href: '/dashboard/pharmacist/patients',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/pharmacist/messages',
+    },
   ],
   MLT: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/mlt" },
-    { icon: <TestTube className="h-5 w-5" />, label: "Test Orders", href: "/dashboard/mlt/orders" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Test Results", href: "/dashboard/mlt/results" },
-    { icon: <Activity className="h-5 w-5" />, label: "Analytics", href: "/dashboard/mlt/analytics" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/mlt/messages" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/mlt' },
+    { icon: <TestTube className="h-5 w-5" />, label: 'Test Orders', href: '/dashboard/mlt/orders' },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Test Results',
+      href: '/dashboard/mlt/results',
+    },
+    {
+      icon: <Activity className="h-5 w-5" />,
+      label: 'Analytics',
+      href: '/dashboard/mlt/analytics',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/mlt/messages',
+    },
   ],
   HOSPITAL_ADMIN: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/hospital" },
-    { icon: <Users className="h-5 w-5" />, label: "Staff Management", href: "/dashboard/hospital/staff" },
-    { icon: <User className="h-5 w-5" />, label: "Doctor Verification", href: "/dashboard/hospital/doctors" },
-    { icon: <Calendar className="h-5 w-5" />, label: "Appointments", href: "/dashboard/hospital/appointments" },
-    { icon: <Activity className="h-5 w-5" />, label: "Analytics", href: "/dashboard/hospital/analytics" },
-    { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/dashboard/hospital/settings" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/hospital',
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'Staff Management',
+      href: '/dashboard/hospital/staff',
+    },
+    {
+      icon: <User className="h-5 w-5" />,
+      label: 'Doctor Verification',
+      href: '/dashboard/hospital/doctors',
+    },
+    {
+      icon: <Calendar className="h-5 w-5" />,
+      label: 'Appointments',
+      href: '/dashboard/hospital/appointments',
+    },
+    {
+      icon: <Activity className="h-5 w-5" />,
+      label: 'Analytics',
+      href: '/dashboard/hospital/analytics',
+    },
+    {
+      icon: <Settings className="h-5 w-5" />,
+      label: 'Settings',
+      href: '/dashboard/hospital/settings',
+    },
   ],
   PHARMACY_ADMIN: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/pharmacy" },
-    { icon: <Users className="h-5 w-5" />, label: "Staff Management", href: "/dashboard/pharmacy/staff" },
-    { icon: <Package className="h-5 w-5" />, label: "Inventory", href: "/dashboard/pharmacy/inventory" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Prescriptions", href: "/dashboard/pharmacy/prescriptions" },
-    { icon: <Activity className="h-5 w-5" />, label: "Analytics", href: "/dashboard/pharmacy/analytics" },
-    { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/dashboard/pharmacy/settings" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/pharmacy',
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'Staff Management',
+      href: '/dashboard/pharmacy/staff',
+    },
+    {
+      icon: <Package className="h-5 w-5" />,
+      label: 'Inventory',
+      href: '/dashboard/pharmacy/inventory',
+    },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Prescriptions',
+      href: '/dashboard/pharmacy/prescriptions',
+    },
+    {
+      icon: <Activity className="h-5 w-5" />,
+      label: 'Analytics',
+      href: '/dashboard/pharmacy/analytics',
+    },
+    {
+      icon: <Settings className="h-5 w-5" />,
+      label: 'Settings',
+      href: '/dashboard/pharmacy/settings',
+    },
   ],
   LAB_ADMIN: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/lab" },
-    { icon: <Users className="h-5 w-5" />, label: "Staff Management", href: "/dashboard/lab/staff" },
-    { icon: <TestTube className="h-5 w-5" />, label: "Test Orders", href: "/dashboard/lab/orders" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Test Results", href: "/dashboard/lab/results" },
-    { icon: <Activity className="h-5 w-5" />, label: "Analytics", href: "/dashboard/lab/analytics" },
-    { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/dashboard/lab/settings" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/lab' },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'Staff Management',
+      href: '/dashboard/lab/staff',
+    },
+    { icon: <TestTube className="h-5 w-5" />, label: 'Test Orders', href: '/dashboard/lab/orders' },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Test Results',
+      href: '/dashboard/lab/results',
+    },
+    {
+      icon: <Activity className="h-5 w-5" />,
+      label: 'Analytics',
+      href: '/dashboard/lab/analytics',
+    },
+    { icon: <Settings className="h-5 w-5" />, label: 'Settings', href: '/dashboard/lab/settings' },
   ],
   INSURANCE_ADMIN: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/insurer" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Claims", href: "/dashboard/insurer/claims" },
-    { icon: <ShieldCheck className="h-5 w-5" />, label: "Policies", href: "/dashboard/insurer/policies" },
-    { icon: <Users className="h-5 w-5" />, label: "Members", href: "/dashboard/insurer/members" },
-    { icon: <Calculator className="h-5 w-5" />, label: "Billing", href: "/dashboard/insurer/billing" },
-    { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/dashboard/insurer/settings" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/insurer',
+    },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Claims',
+      href: '/dashboard/insurer/claims',
+    },
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      label: 'Policies',
+      href: '/dashboard/insurer/policies',
+    },
+    { icon: <Users className="h-5 w-5" />, label: 'Members', href: '/dashboard/insurer/members' },
+    {
+      icon: <Calculator className="h-5 w-5" />,
+      label: 'Billing',
+      href: '/dashboard/insurer/billing',
+    },
+    {
+      icon: <Settings className="h-5 w-5" />,
+      label: 'Settings',
+      href: '/dashboard/insurer/settings',
+    },
   ],
   INSURANCE_AGENT: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/agent" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Claims", href: "/dashboard/agent/claims" },
-    { icon: <ShieldCheck className="h-5 w-5" />, label: "Policies", href: "/dashboard/agent/policies" },
-    { icon: <Users className="h-5 w-5" />, label: "Clients", href: "/dashboard/agent/clients" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/agent/messages" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/agent' },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Claims',
+      href: '/dashboard/agent/claims',
+    },
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      label: 'Policies',
+      href: '/dashboard/agent/policies',
+    },
+    { icon: <Users className="h-5 w-5" />, label: 'Clients', href: '/dashboard/agent/clients' },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/agent/messages',
+    },
   ],
   SUPER_ADMIN: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/admin" },
-    { icon: <Users className="h-5 w-5" />, label: "Organizations", href: "/dashboard/admin/organizations" },
-    { icon: <User className="h-5 w-5" />, label: "User Management", href: "/dashboard/admin/users" },
-    { icon: <ShieldCheck className="h-5 w-5" />, label: "Verifications", href: "/dashboard/admin/verifications" },
-    { icon: <Activity className="h-5 w-5" />, label: "System Logs", href: "/dashboard/admin/logs" },
-    { icon: <FileText className="h-5 w-5" />, label: "Reports", href: "/dashboard/admin/reports" },
-    { icon: <Settings className="h-5 w-5" />, label: "System Settings", href: "/dashboard/admin/settings" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/admin' },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'Organizations',
+      href: '/dashboard/admin/organizations',
+    },
+    {
+      icon: <User className="h-5 w-5" />,
+      label: 'User Management',
+      href: '/dashboard/admin/users',
+    },
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      label: 'Verifications',
+      href: '/dashboard/admin/verifications',
+    },
+    { icon: <Activity className="h-5 w-5" />, label: 'System Logs', href: '/dashboard/admin/logs' },
+    { icon: <FileText className="h-5 w-5" />, label: 'Reports', href: '/dashboard/admin/reports' },
+    {
+      icon: <Settings className="h-5 w-5" />,
+      label: 'System Settings',
+      href: '/dashboard/admin/settings',
+    },
   ],
   // Legacy support
   doctor: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/doctor" },
-    { icon: <Calendar className="h-5 w-5" />, label: "Appointments", href: "/dashboard/doctor/appointments" },
-    { icon: <User className="h-5 w-5" />, label: "Patients", href: "/dashboard/doctor/patients" },
-    { icon: <FileText className="h-5 w-5" />, label: "Prescriptions", href: "/dashboard/doctor/prescriptions" },
-    { icon: <TestTube className="h-5 w-5" />, label: "Lab Tests", href: "/dashboard/doctor/lab-tests" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/doctor/messages" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/doctor' },
+    {
+      icon: <Calendar className="h-5 w-5" />,
+      label: 'Appointments',
+      href: '/dashboard/doctor/appointments',
+    },
+    { icon: <User className="h-5 w-5" />, label: 'Patients', href: '/dashboard/doctor/patients' },
+    {
+      icon: <FileText className="h-5 w-5" />,
+      label: 'Prescriptions',
+      href: '/dashboard/doctor/prescriptions',
+    },
+    {
+      icon: <TestTube className="h-5 w-5" />,
+      label: 'Lab Tests',
+      href: '/dashboard/doctor/lab-tests',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/doctor/messages',
+    },
   ],
   pharmacist: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/pharmacist" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Prescriptions", href: "/dashboard/pharmacist/prescriptions" },
-    { icon: <Package className="h-5 w-5" />, label: "Inventory", href: "/dashboard/pharmacist/inventory" },
-    { icon: <Users className="h-5 w-5" />, label: "Patients", href: "/dashboard/pharmacist/patients" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/pharmacist/messages" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/pharmacist',
+    },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Prescriptions',
+      href: '/dashboard/pharmacist/prescriptions',
+    },
+    {
+      icon: <Package className="h-5 w-5" />,
+      label: 'Inventory',
+      href: '/dashboard/pharmacist/inventory',
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'Patients',
+      href: '/dashboard/pharmacist/patients',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/pharmacist/messages',
+    },
   ],
   lab: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/lab" },
-    { icon: <TestTube className="h-5 w-5" />, label: "Test Orders", href: "/dashboard/lab/orders" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Test Results", href: "/dashboard/lab/results" },
-    { icon: <Activity className="h-5 w-5" />, label: "Analytics", href: "/dashboard/lab/analytics" },
-    { icon: <MessageCircle className="h-5 w-5" />, label: "Messages", href: "/dashboard/lab/messages" },
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/lab' },
+    { icon: <TestTube className="h-5 w-5" />, label: 'Test Orders', href: '/dashboard/lab/orders' },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Test Results',
+      href: '/dashboard/lab/results',
+    },
+    {
+      icon: <Activity className="h-5 w-5" />,
+      label: 'Analytics',
+      href: '/dashboard/lab/analytics',
+    },
+    {
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Messages',
+      href: '/dashboard/lab/messages',
+    },
   ],
   insurer: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/insurer" },
-    { icon: <ClipboardList className="h-5 w-5" />, label: "Claims", href: "/dashboard/insurer/claims" },
-    { icon: <ShieldCheck className="h-5 w-5" />, label: "Policies", href: "/dashboard/insurer/policies" },
-    { icon: <Users className="h-5 w-5" />, label: "Members", href: "/dashboard/insurer/members" },
-    { icon: <Calculator className="h-5 w-5" />, label: "Billing", href: "/dashboard/insurer/billing" },
+    {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      label: 'Overview',
+      href: '/dashboard/insurer',
+    },
+    {
+      icon: <ClipboardList className="h-5 w-5" />,
+      label: 'Claims',
+      href: '/dashboard/insurer/claims',
+    },
+    {
+      icon: <ShieldCheck className="h-5 w-5" />,
+      label: 'Policies',
+      href: '/dashboard/insurer/policies',
+    },
+    { icon: <Users className="h-5 w-5" />, label: 'Members', href: '/dashboard/insurer/members' },
+    {
+      icon: <Calculator className="h-5 w-5" />,
+      label: 'Billing',
+      href: '/dashboard/insurer/billing',
+    },
   ],
   admin: [
-    { icon: <LayoutDashboard className="h-5 w-5" />, label: "Overview", href: "/dashboard/admin" },
-    { icon: <Users className="h-5 w-5" />, label: "User Management", href: "/dashboard/admin/users" },
-    { icon: <Activity className="h-5 w-5" />, label: "System Logs", href: "/dashboard/admin/logs" },
-    { icon: <FileText className="h-5 w-5" />, label: "Reports", href: "/dashboard/admin/reports" },
-    { icon: <Settings className="h-5 w-5" />, label: "System Settings", href: "/dashboard/admin/settings" },
-  ]
+    { icon: <LayoutDashboard className="h-5 w-5" />, label: 'Overview', href: '/dashboard/admin' },
+    {
+      icon: <Users className="h-5 w-5" />,
+      label: 'User Management',
+      href: '/dashboard/admin/users',
+    },
+    { icon: <Activity className="h-5 w-5" />, label: 'System Logs', href: '/dashboard/admin/logs' },
+    { icon: <FileText className="h-5 w-5" />, label: 'Reports', href: '/dashboard/admin/reports' },
+    {
+      icon: <Settings className="h-5 w-5" />,
+      label: 'System Settings',
+      href: '/dashboard/admin/settings',
+    },
+  ],
 };
 
 interface DashboardLayoutProps {
@@ -175,9 +423,9 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  
+
   const sidebarItems = sidebarItemsByRole[role] || [];
-  
+
   // Get role title
   const getRoleTitle = () => {
     switch (role) {
@@ -224,7 +472,6 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
     .join('')
     .toUpperCase();
 
-
   return (
     <div className="flex min-h-screen">
       {/* Sidebar for desktop */}
@@ -237,18 +484,18 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
             <h1 className="text-xl font-bold text-primary">Nurox</h1>
           </Link>
         </div>
-        
+
         <div className="flex-1 overflow-auto py-4">
           <nav className="space-y-1 px-2">
-            {sidebarItems.map((item) => (
+            {sidebarItems.map(item => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                   pathname === item.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 )}
               >
                 {item.icon}
@@ -257,11 +504,13 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
             ))}
           </nav>
         </div>
-        
+
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 mb-4">
             <Avatar>
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
+              <AvatarImage
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`}
+              />
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
             <div>
@@ -275,7 +524,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
           </Button>
         </div>
       </aside>
-      
+
       {/* Mobile sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger asChild>
@@ -285,7 +534,11 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
         </SheetTrigger>
         <SheetContent side="left" className="p-0">
           <div className="p-6 border-b">
-            <Link href="/" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
+            <Link
+              href="/"
+              className="flex items-center gap-2"
+              onClick={() => setSidebarOpen(false)}
+            >
               <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-lg">H</span>
               </div>
@@ -293,19 +546,17 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
             </Link>
           </div>
 
-          
-          
           <div className="py-4">
             <nav className="space-y-1 px-2">
-              {sidebarItems.map((item) => (
+              {sidebarItems.map(item => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                     pathname === item.href
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   )}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -315,11 +566,13 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
               ))}
             </nav>
           </div>
-          
+
           <div className="p-4 border-t mt-auto">
             <div className="flex items-center gap-3 mb-4">
               <Avatar>
-                <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
+                <AvatarImage
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`}
+                />
                 <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
               <div>
@@ -334,7 +587,7 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
           </div>
         </SheetContent>
       </Sheet>
-      
+
       {/* Main content */}
       <div className="flex-1 flex flex-col max-h-screen overflow-hidden">
         {/* Header */}
@@ -349,18 +602,20 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
               </div>
             </Link>
           </div>
-          
+
           <div className="flex items-center ml-auto gap-4">
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
-            
+
             {/* User menu - desktop */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full hidden md:flex">
                   <Avatar>
-                    <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
+                    <AvatarImage
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`}
+                    />
                     <AvatarFallback>{userInitials}</AvatarFallback>
                   </Avatar>
                 </Button>
@@ -388,19 +643,19 @@ export function DashboardLayout({ children, role }: DashboardLayoutProps) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             {/* User avatar - mobile */}
             <Avatar className="md:hidden h-8 w-8">
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`} />
+              <AvatarImage
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`}
+              />
               <AvatarFallback>{userInitials}</AvatarFallback>
             </Avatar>
           </div>
         </header>
-        
+
         {/* Main area */}
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
+        <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
     </div>
   );

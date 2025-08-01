@@ -3,15 +3,26 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
-    const requiredFields = ['name', 'registrationNumber', 'licenseNumber', 'address', 'phone', 'email', 'contactPerson'];
+    const requiredFields = [
+      'name',
+      'registrationNumber',
+      'licenseNumber',
+      'address',
+      'phone',
+      'email',
+      'contactPerson',
+    ];
     for (const field of requiredFields) {
       if (!body[field]) {
-        return NextResponse.json({
-          success: false,
-          message: `${field} is required`
-        }, { status: 400 });
+        return NextResponse.json(
+          {
+            success: false,
+            message: `${field} is required`,
+          },
+          { status: 400 }
+        );
       }
     }
 
@@ -29,20 +40,23 @@ export async function POST(request: NextRequest) {
       hospitalId: body.hospitalId || null,
       status: 'ACTIVE',
       createdAt: new Date().toISOString(),
-      _count: { users: 0 }
+      _count: { users: 0 },
     };
 
     return NextResponse.json({
       success: true,
       message: 'Laboratory created successfully',
-      data: newLaboratory
+      data: newLaboratory,
     });
   } catch (error) {
     console.error('Error creating laboratory:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Failed to create laboratory'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to create laboratory',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -55,7 +69,7 @@ export async function GET() {
         name: 'Diagnostic Lab',
         status: 'ACTIVE',
         createdAt: '2024-01-25T11:00:00Z',
-        _count: { users: 18 }
+        _count: { users: 18 },
       },
       {
         id: '2',
@@ -63,20 +77,23 @@ export async function GET() {
         status: 'PENDING_APPROVAL',
         createdAt: '2024-03-10T16:45:00Z',
         _count: { users: 5 },
-        hospitalId: '2'
-      }
+        hospitalId: '2',
+      },
     ];
 
     return NextResponse.json({
       success: true,
       message: 'Laboratories retrieved successfully',
-      data: laboratories
+      data: laboratories,
     });
   } catch (error) {
     console.error('Error fetching laboratories:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Failed to fetch laboratories'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to fetch laboratories',
+      },
+      { status: 500 }
+    );
   }
 }

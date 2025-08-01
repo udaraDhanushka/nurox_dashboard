@@ -43,95 +43,93 @@ export default function LabDashboard() {
       <div className="space-y-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Laboratory Dashboard</h2>
-          <p className="text-muted-foreground">
-            Monitor and manage laboratory test orders.
-          </p>
+          <p className="text-muted-foreground">Monitor and manage laboratory test orders.</p>
         </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Pending Tests"
-          value={stats.pendingTests}
-          icon={<Clock className="h-4 w-4" />}
-          description="Tests waiting to be processed"
-        />
-        <StatsCard
-          title="Completed Today"
-          value={stats.completedToday}
-          icon={<CheckCircle className="h-4 w-4" />}
-          description="Tests completed today"
-        />
-        <StatsCard
-          title="In Progress"
-          value={stats.inProgress}
-          icon={<Beaker className="h-4 w-4" />}
-          description="Tests currently being processed"
-        />
-        <StatsCard
-          title="Test Types"
-          value={stats.totalTestTypes}
-          icon={<FileText className="h-4 w-4" />}
-          description="Available laboratory tests"
-        />
-      </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatsCard
+            title="Pending Tests"
+            value={stats.pendingTests}
+            icon={<Clock className="h-4 w-4" />}
+            description="Tests waiting to be processed"
+          />
+          <StatsCard
+            title="Completed Today"
+            value={stats.completedToday}
+            icon={<CheckCircle className="h-4 w-4" />}
+            description="Tests completed today"
+          />
+          <StatsCard
+            title="In Progress"
+            value={stats.inProgress}
+            icon={<Beaker className="h-4 w-4" />}
+            description="Tests currently being processed"
+          />
+          <StatsCard
+            title="Test Types"
+            value={stats.totalTestTypes}
+            icon={<FileText className="h-4 w-4" />}
+            description="Available laboratory tests"
+          />
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Recent Tests */}
-        <div className="col-span-2">
-          <h3 className="text-xl font-semibold mb-4">Recent Test Orders</h3>
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-4">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm text-gray-500">
-                    <th className="pb-3">Patient</th>
-                    <th className="pb-3">Test</th>
-                    <th className="pb-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.recentTests.map((test) => (
-                    <tr key={test.id} className="border-t">
-                      <td className="py-3">{test.patient}</td>
-                      <td className="py-3">{test.test}</td>
-                      <td className="py-3">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            test.status === 'Completed'
-                              ? 'bg-green-100 text-green-800'
-                              : test.status === 'In Progress'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                          }`}
-                        >
-                          {test.status}
-                        </span>
-                      </td>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {/* Recent Tests */}
+          <div className="col-span-2">
+            <h3 className="text-xl font-semibold mb-4">Recent Test Orders</h3>
+            <div className="bg-white rounded-lg shadow">
+              <div className="p-4">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-sm text-gray-500">
+                      <th className="pb-3">Patient</th>
+                      <th className="pb-3">Test</th>
+                      <th className="pb-3">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {stats.recentTests.map(test => (
+                      <tr key={test.id} className="border-t">
+                        <td className="py-3">{test.patient}</td>
+                        <td className="py-3">{test.test}</td>
+                        <td className="py-3">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              test.status === 'Completed'
+                                ? 'bg-green-100 text-green-800'
+                                : test.status === 'In Progress'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                          >
+                            {test.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
+            <div className="space-y-2">
+              <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+                Update Test Status
+              </button>
+              <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+                Upload Test Results
+              </button>
+              <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
+                Manage Test Types
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Quick Actions */}
-        <div>
-          <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
-          <div className="space-y-2">
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
-              Update Test Status
-            </button>
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
-              Upload Test Results
-            </button>
-            <button className="w-full bg-white p-4 rounded-lg shadow text-left hover:bg-gray-50 transition-colors">
-              Manage Test Types
-            </button>
-          </div>
-        </div>
-      </div>
       </div>
     </DashboardLayout>
   );
-} 
+}

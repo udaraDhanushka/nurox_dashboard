@@ -27,7 +27,13 @@ const LegacyAdminDashboard = () => {
     activeUsers: 0,
     pendingApprovals: 0,
     securityAlerts: 0,
-    recentActivity: [] as { id: number; user: string; action: string; type: string; timestamp: string; }[],
+    recentActivity: [] as {
+      id: number;
+      user: string;
+      action: string;
+      type: string;
+      timestamp: string;
+    }[],
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,9 +47,27 @@ const LegacyAdminDashboard = () => {
         pendingApprovals: 15,
         securityAlerts: 3,
         recentActivity: [
-          { id: 1, user: 'Dr. Sarah Chen', action: 'Account Created', type: 'doctor', timestamp: '2 minutes ago' },
-          { id: 2, user: 'Lab Tech', action: 'Password Reset', type: 'lab', timestamp: '15 minutes ago' },
-          { id: 3, user: 'Pharmacy Staff', action: 'Profile Updated', type: 'pharmacist', timestamp: '1 hour ago' },
+          {
+            id: 1,
+            user: 'Dr. Sarah Chen',
+            action: 'Account Created',
+            type: 'doctor',
+            timestamp: '2 minutes ago',
+          },
+          {
+            id: 2,
+            user: 'Lab Tech',
+            action: 'Password Reset',
+            type: 'lab',
+            timestamp: '15 minutes ago',
+          },
+          {
+            id: 3,
+            user: 'Pharmacy Staff',
+            action: 'Profile Updated',
+            type: 'pharmacist',
+            timestamp: '1 hour ago',
+          },
         ],
       };
       setStats(mockData);
@@ -109,7 +133,7 @@ const LegacyAdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {stats.recentActivity.map((activity) => (
+                  {stats.recentActivity.map(activity => (
                     <tr key={activity.id} className="border-t">
                       <td className="py-3">{activity.user}</td>
                       <td className="py-3">{activity.action}</td>
@@ -119,8 +143,8 @@ const LegacyAdminDashboard = () => {
                             activity.type === 'doctor'
                               ? 'bg-blue-100 text-blue-800'
                               : activity.type === 'lab'
-                              ? 'bg-purple-100 text-purple-800'
-                              : 'bg-green-100 text-green-800'
+                                ? 'bg-purple-100 text-purple-800'
+                                : 'bg-green-100 text-green-800'
                           }`}
                         >
                           {activity.type}
@@ -156,4 +180,4 @@ const LegacyAdminDashboard = () => {
       </div>
     </div>
   );
-} 
+};

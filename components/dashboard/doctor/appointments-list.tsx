@@ -1,33 +1,29 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
-import { 
-  CalendarIcon, 
-  CheckCircle, 
-  Clock, 
-  Search, 
-  Filter, 
-  X, 
-  ChevronLeft, 
-  ChevronRight 
+import {
+  CalendarIcon,
+  CheckCircle,
+  Clock,
+  Search,
+  Filter,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Dialog,
   DialogContent,
@@ -35,7 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
@@ -45,83 +41,83 @@ import { cn } from '@/lib/utils';
 const appointments = [
   {
     id: 1,
-    patient: { name: "Olivia Thompson", age: 34, gender: "Female" },
+    patient: { name: 'Olivia Thompson', age: 34, gender: 'Female' },
     date: new Date(2025, 5, 10, 9, 0),
-    type: "Follow-up",
-    status: "completed",
-    reason: "Hypertension monitoring",
+    type: 'Follow-up',
+    status: 'completed',
+    reason: 'Hypertension monitoring',
     duration: 30,
-    notes: "Patient reported improved symptoms after medication adjustment."
+    notes: 'Patient reported improved symptoms after medication adjustment.',
   },
   {
     id: 2,
-    patient: { name: "Michael Reeves", age: 28, gender: "Male" },
+    patient: { name: 'Michael Reeves', age: 28, gender: 'Male' },
     date: new Date(2025, 5, 10, 10, 30),
-    type: "Consultation",
-    status: "completed",
-    reason: "Respiratory infection",
+    type: 'Consultation',
+    status: 'completed',
+    reason: 'Respiratory infection',
     duration: 30,
-    notes: "Prescribed antibiotics and recommended rest."
+    notes: 'Prescribed antibiotics and recommended rest.',
   },
   {
     id: 3,
-    patient: { name: "Sophia Garcia", age: 42, gender: "Female" },
+    patient: { name: 'Sophia Garcia', age: 42, gender: 'Female' },
     date: new Date(2025, 5, 10, 12, 0),
-    type: "Check-up",
-    status: "active",
-    reason: "Diabetes monitoring",
+    type: 'Check-up',
+    status: 'active',
+    reason: 'Diabetes monitoring',
     duration: 45,
-    notes: "Review recent lab results and medication effectiveness."
+    notes: 'Review recent lab results and medication effectiveness.',
   },
   {
     id: 4,
-    patient: { name: "William Chen", age: 55, gender: "Male" },
+    patient: { name: 'William Chen', age: 55, gender: 'Male' },
     date: new Date(2025, 5, 10, 14, 15),
-    type: "Lab Review",
-    status: "upcoming",
-    reason: "Post-surgery follow-up",
+    type: 'Lab Review',
+    status: 'upcoming',
+    reason: 'Post-surgery follow-up',
     duration: 30,
-    notes: "Check wound healing and recovery progress."
+    notes: 'Check wound healing and recovery progress.',
   },
   {
     id: 5,
-    patient: { name: "Emma Davis", age: 38, gender: "Female" },
+    patient: { name: 'Emma Davis', age: 38, gender: 'Female' },
     date: new Date(2025, 5, 10, 15, 45),
-    type: "Follow-up",
-    status: "upcoming",
-    reason: "Medication review",
+    type: 'Follow-up',
+    status: 'upcoming',
+    reason: 'Medication review',
     duration: 30,
-    notes: "Assess effectiveness of new anxiety medication."
+    notes: 'Assess effectiveness of new anxiety medication.',
   },
   {
     id: 6,
-    patient: { name: "James Wilson", age: 61, gender: "Male" },
+    patient: { name: 'James Wilson', age: 61, gender: 'Male' },
     date: new Date(2025, 5, 11, 9, 30),
-    type: "Annual Exam",
-    status: "scheduled",
-    reason: "Yearly check-up",
+    type: 'Annual Exam',
+    status: 'scheduled',
+    reason: 'Yearly check-up',
     duration: 60,
-    notes: "Comprehensive health assessment and preventive care."
+    notes: 'Comprehensive health assessment and preventive care.',
   },
   {
     id: 7,
-    patient: { name: "Linda Martinez", age: 47, gender: "Female" },
+    patient: { name: 'Linda Martinez', age: 47, gender: 'Female' },
     date: new Date(2025, 5, 11, 11, 0),
-    type: "Consultation",
-    status: "scheduled",
-    reason: "Joint pain",
+    type: 'Consultation',
+    status: 'scheduled',
+    reason: 'Joint pain',
     duration: 45,
-    notes: "Evaluate chronic knee pain and discuss treatment options."
+    notes: 'Evaluate chronic knee pain and discuss treatment options.',
   },
   {
     id: 8,
-    patient: { name: "Robert Taylor", age: 52, gender: "Male" },
+    patient: { name: 'Robert Taylor', age: 52, gender: 'Male' },
     date: new Date(2025, 5, 11, 13, 30),
-    type: "Follow-up",
-    status: "scheduled",
-    reason: "Cardiac monitoring",
+    type: 'Follow-up',
+    status: 'scheduled',
+    reason: 'Cardiac monitoring',
     duration: 30,
-    notes: "Review recent stress test results and medication efficacy."
+    notes: 'Review recent stress test results and medication efficacy.',
   },
 ];
 
@@ -129,36 +125,34 @@ export function AppointmentsList() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  
+
   // Filter appointments based on search query, selected date, and status
   const filteredAppointments = appointments.filter(appointment => {
-    const matchesSearch = 
+    const matchesSearch =
       appointment.patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       appointment.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
       appointment.reason.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesDate = date ? 
-      appointment.date.getDate() === date.getDate() && 
-      appointment.date.getMonth() === date.getMonth() && 
-      appointment.date.getFullYear() === date.getFullYear() 
+
+    const matchesDate = date
+      ? appointment.date.getDate() === date.getDate() &&
+        appointment.date.getMonth() === date.getMonth() &&
+        appointment.date.getFullYear() === date.getFullYear()
       : true;
-    
+
     const matchesStatus = statusFilter === 'all' || appointment.status === statusFilter;
-    
+
     return matchesSearch && matchesDate && matchesStatus;
   });
-  
+
   return (
     <div className="space-y-6">
-      <DashboardHeader 
-        title="Appointments" 
+      <DashboardHeader
+        title="Appointments"
         description="Manage and schedule patient appointments"
         actions={
           <Dialog>
             <DialogTrigger asChild>
-              <Button>
-                New Appointment
-              </Button>
+              <Button>New Appointment</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -172,7 +166,7 @@ export function AppointmentsList() {
           </Dialog>
         }
       />
-      
+
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1">
@@ -183,26 +177,23 @@ export function AppointmentsList() {
                 placeholder="Search appointments..."
                 className="pl-8"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
-          
+
           <div className="flex flex-wrap gap-3">
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="justify-start text-left font-normal w-[240px]"
-                >
+                <Button variant="outline" className="justify-start text-left font-normal w-[240px]">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : "Pick a date"}
+                  {date ? format(date, 'PPP') : 'Pick a date'}
                   {date && (
                     <Button
                       variant="ghost"
                       size="icon"
                       className="ml-auto h-6 w-6"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         setDate(undefined);
                       }}
@@ -213,19 +204,11 @@ export function AppointmentsList() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
+                <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
               </PopoverContent>
             </Popover>
-            
-            <Select
-              value={statusFilter}
-              onValueChange={setStatusFilter}
-            >
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Filter by status" />
@@ -241,29 +224,43 @@ export function AppointmentsList() {
             </Select>
           </div>
         </div>
-        
+
         <div className="border rounded-md overflow-hidden">
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="bg-muted/50">
-                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Patient</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Date & Time</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Type</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                  Patient
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                  Date & Time
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                  Type
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                  Status
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {filteredAppointments.map((appointment) => (
-                <tr 
-                  key={appointment.id} 
-                  className="border-t hover:bg-muted/50 transition-colors"
-                >
+              {filteredAppointments.map(appointment => (
+                <tr key={appointment.id} className="border-t hover:bg-muted/50 transition-colors">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
-                        <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(appointment.patient.name)}&background=random`} />
-                        <AvatarFallback>{appointment.patient.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarImage
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(appointment.patient.name)}&background=random`}
+                        />
+                        <AvatarFallback>
+                          {appointment.patient.name
+                            .split(' ')
+                            .map(n => n[0])
+                            .join('')}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-medium">{appointment.patient.name}</p>
@@ -276,10 +273,10 @@ export function AppointmentsList() {
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-1">
                       <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground mr-1" />
-                      <span>{format(appointment.date, "MMM d, yyyy")}</span>
+                      <span>{format(appointment.date, 'MMM d, yyyy')}</span>
                       <span className="mx-1 text-muted-foreground">•</span>
                       <Clock className="h-3.5 w-3.5 text-muted-foreground mr-1" />
-                      <span>{format(appointment.date, "h:mm a")}</span>
+                      <span>{format(appointment.date, 'h:mm a')}</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">{appointment.duration} min</p>
                   </td>
@@ -288,27 +285,36 @@ export function AppointmentsList() {
                     <p className="text-xs text-muted-foreground">{appointment.reason}</p>
                   </td>
                   <td className="py-3 px-4">
-                    <span className={cn(
-                      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                      appointment.status === "active" && "bg-blue-100 text-blue-800",
-                      appointment.status === "completed" && "bg-green-100 text-green-800",
-                      appointment.status === "upcoming" && "bg-yellow-100 text-yellow-800",
-                      appointment.status === "scheduled" && "bg-purple-100 text-purple-800",
-                      appointment.status === "cancelled" && "bg-red-100 text-red-800"
-                    )}>
+                    <span
+                      className={cn(
+                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+                        appointment.status === 'active' && 'bg-blue-100 text-blue-800',
+                        appointment.status === 'completed' && 'bg-green-100 text-green-800',
+                        appointment.status === 'upcoming' && 'bg-yellow-100 text-yellow-800',
+                        appointment.status === 'scheduled' && 'bg-purple-100 text-purple-800',
+                        appointment.status === 'cancelled' && 'bg-red-100 text-red-800'
+                      )}
+                    >
                       {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-right">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button 
-                          variant={appointment.status === "active" ? "default" : "outline"} 
+                        <Button
+                          variant={appointment.status === 'active' ? 'default' : 'outline'}
                           size="sm"
-                          className={appointment.status === "completed" ? "pointer-events-none opacity-50" : ""}
+                          className={
+                            appointment.status === 'completed'
+                              ? 'pointer-events-none opacity-50'
+                              : ''
+                          }
                         >
-                          {appointment.status === "active" ? "Start Session" : 
-                           appointment.status === "completed" ? "View Report" : "View Details"}
+                          {appointment.status === 'active'
+                            ? 'Start Session'
+                            : appointment.status === 'completed'
+                              ? 'View Report'
+                              : 'View Details'}
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
@@ -325,7 +331,8 @@ export function AppointmentsList() {
                               {appointment.type} - {appointment.reason}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {format(appointment.date, "PPP")} at {format(appointment.date, "h:mm a")}
+                              {format(appointment.date, 'PPP')} at{' '}
+                              {format(appointment.date, 'h:mm a')}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               Duration: {appointment.duration} minutes
@@ -333,9 +340,7 @@ export function AppointmentsList() {
                           </div>
                           <div className="grid gap-2">
                             <h4 className="font-medium">Notes</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {appointment.notes}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{appointment.notes}</p>
                           </div>
                         </div>
                       </DialogContent>
@@ -343,7 +348,7 @@ export function AppointmentsList() {
                   </td>
                 </tr>
               ))}
-              
+
               {filteredAppointments.length === 0 && (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-muted-foreground">
@@ -354,12 +359,12 @@ export function AppointmentsList() {
             </tbody>
           </table>
         </div>
-        
+
         <div className="flex items-center justify-between mt-4">
           <p className="text-sm text-muted-foreground">
             Showing {filteredAppointments.length} of {appointments.length} appointments
           </p>
-          
+
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="icon" disabled>
               <ChevronLeft className="h-4 w-4" />

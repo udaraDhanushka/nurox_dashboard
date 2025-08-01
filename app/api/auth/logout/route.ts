@@ -10,14 +10,10 @@ export async function POST(request: NextRequest) {
     // For this demo, we'll just return a success response
     return NextResponse.json({
       success: true,
-      message: 'Logout successful'
+      message: 'Logout successful',
     });
-
   } catch (error) {
     console.error('Logout API error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }

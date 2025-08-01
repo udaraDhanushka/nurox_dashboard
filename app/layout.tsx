@@ -11,14 +11,11 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Nurox Dashboard - Healthcare Management System',
-  description: 'Comprehensive healthcare management system for hospitals, pharmacies, labs, and insurers',
+  description:
+    'Comprehensive healthcare management system for hospitals, pharmacies, labs, and insurers',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>

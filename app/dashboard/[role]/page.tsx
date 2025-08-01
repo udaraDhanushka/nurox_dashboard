@@ -14,7 +14,7 @@ const validRoles = getValidRoutes();
 
 // Required for static site generation with dynamic routes
 export function generateStaticParams() {
-  return validRoles.map((role) => ({
+  return validRoles.map(role => ({
     role: role,
   }));
 }
@@ -54,9 +54,5 @@ export default function DashboardPage({ params }: DashboardPageProps) {
     }
   };
 
-  return (
-    <DashboardLayout role={params.role}>
-      {renderDashboard()}
-    </DashboardLayout>
-  );
+  return <DashboardLayout role={params.role}>{renderDashboard()}</DashboardLayout>;
 }

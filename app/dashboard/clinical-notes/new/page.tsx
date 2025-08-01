@@ -102,11 +102,7 @@ export default function AddClinicalNotes() {
             </div>
 
             <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
+              <Button type="button" variant="outline" onClick={() => router.back()}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
@@ -118,4 +114,4 @@ export default function AddClinicalNotes() {
       </Card>
     </div>
   );
-} 
+}

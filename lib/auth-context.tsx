@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { apiService } from './api';
@@ -9,7 +9,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  name: string; 
+  name: string;
   role: string;
   isActive: boolean;
   hospitalId?: string;
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Add a small delay to prevent blocking authentication flow
       setTimeout(() => {
         socketService.connect(token);
-        
+
         // Monitor socket connection status
         socketService.on('connect', () => {
           setIsSocketConnected(true);
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Initialize authentication state only after hydration
   useEffect(() => {
     if (!isHydrated) return;
-    
+
     const initAuth = async () => {
       try {
         // Check if we're in a browser environment
@@ -117,14 +117,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             // Set token in API service
             apiService.setToken(token);
-            
+
             // Set user immediately from stored data to prevent flicker
             setUser(parsedUser as User);
-            
+
             // Verify token with server in background
             try {
               const response = await apiService.getCurrentUser();
-              
+
               if (!response.success) {
                 // Token is invalid, clear stored data
                 console.log('Invalid token detected, clearing authentication data');
@@ -183,16 +183,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Don't set global isLoading during login - it causes flickering
       const response = await apiService.login(email, password);
-      
+
       if (response.success && response.data) {
         setUser((response.data as any).user);
-        
+
         // Initialize socket connection
         initializeSocket((response.data as any).accessToken);
-        
-        return { 
-          success: true, 
-          message: response.message || 'Login successful'
+
+        return {
+          success: true,
+          message: response.message || 'Login successful',
         };
       } else {
         return { success: false, message: response.message || 'Login failed' };
@@ -207,13 +207,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Don't set global isLoading during register - it causes flickering
       const response = await apiService.register(userData);
-      
+
       if (response.success && response.data) {
         setUser((response.data as any).user);
-        
+
         // Initialize socket connection
         initializeSocket((response.data as any).accessToken);
-        
+
         return { success: true, message: 'Registration successful' };
       } else {
         return { success: false, message: response.message || 'Registration failed' };
@@ -229,15 +229,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Disconnect socket first
       socketService.disconnect();
       setIsSocketConnected(false);
-      
+
       // Call logout API
       await apiService.logout();
-      
+
       // Clear user state
       setUser(null);
     } catch (error) {
       console.error('Logout error:', error);
-      
+
       // Even if API call fails, still clear local state
       socketService.disconnect();
       setIsSocketConnected(false);
@@ -255,7 +255,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (storageError) {
         console.error('Error clearing storage during logout:', storageError);
       }
-      
+
       // Clear API service token
       apiService.clearToken();
     }
@@ -264,7 +264,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUser = async () => {
     try {
       const response = await apiService.getCurrentUser();
-      
+
       if (response.success && response.data) {
         setUser(response.data as User);
       }
@@ -290,14 +290,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     register,
     refreshUser,
-    isSocketConnected
+    isSocketConnected,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

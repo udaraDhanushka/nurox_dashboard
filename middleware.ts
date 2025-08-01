@@ -20,12 +20,12 @@ export function middleware(request: NextRequest) {
   if (dashboardMatch) {
     // Get user data from localStorage via cookie or session
     const token = request.cookies.get('accessToken')?.value;
-    
+
     // If no token, redirect to login
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
-    
+
     // Let the client-side auth handle role-based routing
     // since we can't easily decode JWT and check user data in middleware
     // without making external API calls

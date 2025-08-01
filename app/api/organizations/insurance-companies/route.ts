@@ -3,15 +3,26 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate required fields
-    const requiredFields = ['name', 'registrationNumber', 'licenseNumber', 'address', 'phone', 'email', 'contactPerson'];
+    const requiredFields = [
+      'name',
+      'registrationNumber',
+      'licenseNumber',
+      'address',
+      'phone',
+      'email',
+      'contactPerson',
+    ];
     for (const field of requiredFields) {
       if (!body[field]) {
-        return NextResponse.json({
-          success: false,
-          message: `${field} is required`
-        }, { status: 400 });
+        return NextResponse.json(
+          {
+            success: false,
+            message: `${field} is required`,
+          },
+          { status: 400 }
+        );
       }
     }
 
@@ -28,20 +39,23 @@ export async function POST(request: NextRequest) {
       coverageTypes: body.coverageTypes || [],
       status: 'ACTIVE',
       createdAt: new Date().toISOString(),
-      _count: { users: 0 }
+      _count: { users: 0 },
     };
 
     return NextResponse.json({
       success: true,
       message: 'Insurance company created successfully',
-      data: newInsuranceCompany
+      data: newInsuranceCompany,
     });
   } catch (error) {
     console.error('Error creating insurance company:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Failed to create insurance company'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to create insurance company',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -54,27 +68,30 @@ export async function GET() {
         name: 'Health Insurance Co.',
         status: 'ACTIVE',
         createdAt: '2024-02-01T09:15:00Z',
-        _count: { users: 25 }
+        _count: { users: 25 },
       },
       {
         id: '2',
         name: 'MediCare Plus',
         status: 'ACTIVE',
         createdAt: '2024-02-15T13:30:00Z',
-        _count: { users: 15 }
-      }
+        _count: { users: 15 },
+      },
     ];
 
     return NextResponse.json({
       success: true,
       message: 'Insurance companies retrieved successfully',
-      data: insuranceCompanies
+      data: insuranceCompanies,
     });
   } catch (error) {
     console.error('Error fetching insurance companies:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Failed to fetch insurance companies'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to fetch insurance companies',
+      },
+      { status: 500 }
+    );
   }
 }

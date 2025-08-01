@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 8080",
     "lint": "next lint",
-    "next": "next"
+    "next": "next",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -79,6 +80,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.17.50",
-    "@types/react-big-calendar": "^1.16.2"
+    "@types/react-big-calendar": "^1.16.2",
+    "prettier": "^3.6.2"
   }
 }

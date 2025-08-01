@@ -14,7 +14,13 @@ export default function MLTDashboard() {
     abnormalResults: 0,
     urgentTests: 0,
     totalTests: 0,
-    recentActivity: [] as { id: number; action: string; patient?: string; test: string; timestamp: string; }[]
+    recentActivity: [] as {
+      id: number;
+      action: string;
+      patient?: string;
+      test: string;
+      timestamp: string;
+    }[],
   });
   const [isStatsLoading, setIsStatsLoading] = useState(true);
 
@@ -29,10 +35,27 @@ export default function MLTDashboard() {
         urgentTests: 2,
         totalTests: 156,
         recentActivity: [
-          { id: 1, action: 'Blood test completed', patient: 'Alice Wilson', test: 'Complete Blood Count', timestamp: '10 minutes ago' },
-          { id: 2, action: 'Urgent test flagged', patient: 'John Smith', test: 'Cardiac Markers', timestamp: '25 minutes ago' },
-          { id: 3, action: 'Quality control passed', test: 'Chemistry Panel', timestamp: '1 hour ago' },
-        ]
+          {
+            id: 1,
+            action: 'Blood test completed',
+            patient: 'Alice Wilson',
+            test: 'Complete Blood Count',
+            timestamp: '10 minutes ago',
+          },
+          {
+            id: 2,
+            action: 'Urgent test flagged',
+            patient: 'John Smith',
+            test: 'Cardiac Markers',
+            timestamp: '25 minutes ago',
+          },
+          {
+            id: 3,
+            action: 'Quality control passed',
+            test: 'Chemistry Panel',
+            timestamp: '1 hour ago',
+          },
+        ],
       });
       setIsStatsLoading(false);
     };
@@ -108,8 +131,11 @@ export default function MLTDashboard() {
                 <div className="bg-white rounded-lg shadow">
                   <div className="p-4">
                     <div className="space-y-3">
-                      {stats.recentActivity.map((activity) => (
-                        <div key={activity.id} className="flex items-start justify-between p-3 border rounded-lg">
+                      {stats.recentActivity.map(activity => (
+                        <div
+                          key={activity.id}
+                          className="flex items-start justify-between p-3 border rounded-lg"
+                        >
                           <div>
                             <p className="font-medium">{activity.action}</p>
                             <p className="text-sm text-gray-600">
@@ -152,7 +178,9 @@ export default function MLTDashboard() {
                       <AlertCircle className="h-5 w-5 text-orange-600" />
                       <div>
                         <p className="font-medium">Review Abnormal Results</p>
-                        <p className="text-sm text-gray-600">{stats.abnormalResults} need attention</p>
+                        <p className="text-sm text-gray-600">
+                          {stats.abnormalResults} need attention
+                        </p>
                       </div>
                     </div>
                   </button>

@@ -16,13 +16,11 @@ export function SimpleStatsCard({ title, value, description, icon }: SimpleStats
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
       </CardContent>
     </Card>
   );
 }
 
 // Export alias for backward compatibility
-export const StatsCard = SimpleStatsCard; 
+export const StatsCard = SimpleStatsCard;

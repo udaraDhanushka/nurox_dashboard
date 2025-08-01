@@ -13,7 +13,7 @@ class ApiService {
 
   constructor() {
     this.baseURL = API_BASE_URL;
-    
+
     // Initialize token from localStorage if available
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('accessToken');
@@ -53,15 +53,15 @@ class ApiService {
                 name: 'General Hospital',
                 status: 'ACTIVE',
                 createdAt: '2024-01-15T09:00:00Z',
-                _count: { users: 45 }
+                _count: { users: 45 },
               },
               {
                 id: '2',
                 name: 'City Medical Center',
                 status: 'ACTIVE',
                 createdAt: '2024-02-20T10:30:00Z',
-                _count: { users: 32 }
-              }
+                _count: { users: 32 },
+              },
             ],
             pharmacies: [
               {
@@ -69,7 +69,7 @@ class ApiService {
                 name: 'Central Pharmacy',
                 status: 'ACTIVE',
                 createdAt: '2024-01-10T08:00:00Z',
-                _count: { users: 12 }
+                _count: { users: 12 },
               },
               {
                 id: '2',
@@ -77,8 +77,8 @@ class ApiService {
                 status: 'ACTIVE',
                 createdAt: '2024-03-05T14:20:00Z',
                 _count: { users: 8 },
-                hospitalId: '1'
-              }
+                hospitalId: '1',
+              },
             ],
             laboratories: [
               {
@@ -86,7 +86,7 @@ class ApiService {
                 name: 'Diagnostic Lab',
                 status: 'ACTIVE',
                 createdAt: '2024-01-25T11:00:00Z',
-                _count: { users: 18 }
+                _count: { users: 18 },
               },
               {
                 id: '2',
@@ -94,8 +94,8 @@ class ApiService {
                 status: 'PENDING_APPROVAL',
                 createdAt: '2024-03-10T16:45:00Z',
                 _count: { users: 5 },
-                hospitalId: '2'
-              }
+                hospitalId: '2',
+              },
             ],
             insuranceCompanies: [
               {
@@ -103,25 +103,25 @@ class ApiService {
                 name: 'Health Insurance Co.',
                 status: 'ACTIVE',
                 createdAt: '2024-02-01T09:15:00Z',
-                _count: { users: 25 }
+                _count: { users: 25 },
               },
               {
                 id: '2',
                 name: 'MediCare Plus',
                 status: 'ACTIVE',
                 createdAt: '2024-02-15T13:30:00Z',
-                _count: { users: 15 }
-              }
+                _count: { users: 15 },
+              },
             ],
             summary: {
               totalHospitals: 2,
               totalPharmacies: 2,
               totalLaboratories: 2,
-              totalInsuranceCompanies: 2
-            }
-          } as T
+              totalInsuranceCompanies: 2,
+            },
+          } as T,
         };
-      
+
       case '/analytics/dashboard':
         return {
           success: true,
@@ -135,36 +135,33 @@ class ApiService {
             completedPrescriptions: 13,
             totalUsers: 248,
             activeUsers: 195,
-            newUsers: 12
-          } as T
+            newUsers: 12,
+          } as T,
         };
-      
+
       default:
         return {
           success: true,
           message: 'Mock API response',
-          data: {} as T
+          data: {} as T,
         };
     }
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<ApiResponse<T>> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     // Check if we're using mock authentication
     const isMockAuth = this.token && this.token.startsWith('mock_');
-    
+
     if (isMockAuth) {
       // Return specific mock data based on endpoint
       return this.getMockResponse<T>(endpoint);
     }
 
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string> || {}),
+      ...((options.headers as Record<string, string>) || {}),
     };
 
     if (this.token) {
@@ -188,12 +185,12 @@ class ApiService {
               ...options,
               headers,
             });
-            
+
             if (retryResponse.ok) {
               return await retryResponse.json();
             }
           }
-          
+
           // If refresh failed or retry failed, clear token and redirect to login
           this.clearToken();
           if (typeof window !== 'undefined') {
@@ -201,7 +198,7 @@ class ApiService {
           }
           throw new Error('Authentication failed');
         }
-        
+
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
@@ -215,10 +212,9 @@ class ApiService {
 
   private async refreshToken(): Promise<boolean> {
     try {
-      const refreshToken = typeof window !== 'undefined' 
-        ? localStorage.getItem('refreshToken') 
-        : null;
-      
+      const refreshToken =
+        typeof window !== 'undefined' ? localStorage.getItem('refreshToken') : null;
+
       if (!refreshToken) {
         return false;
       }
@@ -345,7 +341,7 @@ class ApiService {
     if (params?.status) queryParams.append('status', params.status);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
-    
+
     const query = queryParams.toString();
     return this.get(`/organizations/hospitals${query ? `?${query}` : ''}`);
   }
@@ -371,11 +367,18 @@ class ApiService {
     return this.get(`/organizations/hospitals/${hospitalId}/doctor-verification-requests${query}`);
   }
 
-  async updateDoctorVerification(hospitalId: string, doctorId: string, data: {
-    status: 'APPROVED' | 'REJECTED' | 'NEEDS_REVIEW';
-    rejectionReason?: string;
-  }) {
-    return this.put(`/organizations/hospitals/${hospitalId}/doctors/${doctorId}/verification`, data);
+  async updateDoctorVerification(
+    hospitalId: string,
+    doctorId: string,
+    data: {
+      status: 'APPROVED' | 'REJECTED' | 'NEEDS_REVIEW';
+      rejectionReason?: string;
+    }
+  ) {
+    return this.put(
+      `/organizations/hospitals/${hospitalId}/doctors/${doctorId}/verification`,
+      data
+    );
   }
 
   async createPharmacy(pharmacyData: any) {
@@ -400,7 +403,7 @@ class ApiService {
     if (params?.role) queryParams.append('role', params.role);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
-    
+
     const query = queryParams.toString();
     return this.get(`/users${query ? `?${query}` : ''}`);
   }
@@ -422,13 +425,13 @@ class ApiService {
   }
 
   // Appointment methods
-  async getAppointments(params?: { 
-    status?: string; 
-    doctorId?: string; 
-    patientId?: string; 
+  async getAppointments(params?: {
+    status?: string;
+    doctorId?: string;
+    patientId?: string;
     date?: string;
-    page?: number; 
-    limit?: number; 
+    page?: number;
+    limit?: number;
   }) {
     const queryParams = new URLSearchParams();
     if (params?.status) queryParams.append('status', params.status);
@@ -437,7 +440,7 @@ class ApiService {
     if (params?.date) queryParams.append('date', params.date);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
-    
+
     const query = queryParams.toString();
     return this.get(`/appointments${query ? `?${query}` : ''}`);
   }
@@ -455,13 +458,13 @@ class ApiService {
   }
 
   // Prescription methods
-  async getPrescriptions(params?: { 
-    status?: string; 
-    doctorId?: string; 
-    patientId?: string; 
+  async getPrescriptions(params?: {
+    status?: string;
+    doctorId?: string;
+    patientId?: string;
     pharmacistId?: string;
-    page?: number; 
-    limit?: number; 
+    page?: number;
+    limit?: number;
   }) {
     const queryParams = new URLSearchParams();
     if (params?.status) queryParams.append('status', params.status);
@@ -470,7 +473,7 @@ class ApiService {
     if (params?.pharmacistId) queryParams.append('pharmacistId', params.pharmacistId);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
-    
+
     const query = queryParams.toString();
     return this.get(`/prescriptions${query ? `?${query}` : ''}`);
   }
@@ -498,7 +501,7 @@ class ApiService {
         }
       });
     }
-    
+
     const query = queryParams.toString();
     return this.get(`/analytics/${type}${query ? `?${query}` : ''}`);
   }

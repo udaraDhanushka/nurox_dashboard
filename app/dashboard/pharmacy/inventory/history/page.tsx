@@ -20,12 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Search, Filter, ArrowDown, ArrowUp } from 'lucide-react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Mock data for order history
 const orderHistory = [
@@ -44,9 +39,7 @@ const orderHistory = [
     id: 'ORD002',
     date: '2024-02-14',
     supplier: 'MediSupply Ltd.',
-    items: [
-      { name: 'Lisinopril 10mg', quantity: 100, unit: 'Tablets' },
-    ],
+    items: [{ name: 'Lisinopril 10mg', quantity: 100, unit: 'Tablets' }],
     status: 'Processing',
     total: 100,
   },
@@ -84,7 +77,7 @@ export default function HistoryPage() {
   const [typeFilter, setTypeFilter] = useState('all');
 
   const filteredOrders = orderHistory.filter(order => {
-    const matchesSearch = 
+    const matchesSearch =
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.supplier.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
@@ -92,7 +85,7 @@ export default function HistoryPage() {
   });
 
   const filteredMovements = stockMovements.filter(movement => {
-    const matchesSearch = 
+    const matchesSearch =
       movement.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movement.reference.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'all' || movement.type === typeFilter;
@@ -117,10 +110,10 @@ export default function HistoryPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
             <Input
               type="search"
-              placeholder={activeTab === 'orders' ? "Search orders..." : "Search movements..."}
+              placeholder={activeTab === 'orders' ? 'Search orders...' : 'Search movements...'}
               className="pl-8 w-full"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
             />
           </div>
           {activeTab === 'orders' ? (
@@ -168,7 +161,7 @@ export default function HistoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredOrders.map((order) => (
+                  {filteredOrders.map(order => (
                     <TableRow key={order.id}>
                       <TableCell className="font-medium">{order.id}</TableCell>
                       <TableCell>{order.date}</TableCell>
@@ -189,8 +182,8 @@ export default function HistoryPage() {
                             order.status === 'Delivered'
                               ? 'bg-green-100 text-green-800'
                               : order.status === 'Processing'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-red-100 text-red-800'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-red-100 text-red-800'
                           }`}
                         >
                           {order.status}
@@ -228,7 +221,7 @@ export default function HistoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredMovements.map((movement) => (
+                  {filteredMovements.map(movement => (
                     <TableRow key={movement.id}>
                       <TableCell className="font-medium">{movement.id}</TableCell>
                       <TableCell>{movement.date}</TableCell>
@@ -264,4 +257,4 @@ export default function HistoryPage() {
       </Tabs>
     </div>
   );
-} 
+}

@@ -53,9 +53,11 @@ export default function PrescriptionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPrescriptions = prescriptions.filter(prescription => {
-    const matchesSearch = prescription.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         prescription.medication.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all' || prescription.status.toLowerCase() === filter.toLowerCase();
+    const matchesSearch =
+      prescription.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prescription.medication.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filter === 'all' || prescription.status.toLowerCase() === filter.toLowerCase();
     return matchesSearch && matchesFilter;
   });
 
@@ -86,7 +88,7 @@ export default function PrescriptionsPage() {
                   placeholder="Search prescriptions..."
                   className="pl-8"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
               <Select value={filter} onValueChange={setFilter}>
@@ -105,7 +107,7 @@ export default function PrescriptionsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredPrescriptions.map((prescription) => (
+            {filteredPrescriptions.map(prescription => (
               <div
                 key={prescription.id}
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-4 sm:space-y-0"
@@ -132,8 +134,8 @@ export default function PrescriptionsPage() {
                       prescription.status === 'Active'
                         ? 'bg-green-100 text-green-800'
                         : prescription.status === 'Pending'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
                     }`}
                   >
                     {prescription.status}
@@ -149,4 +151,4 @@ export default function PrescriptionsPage() {
       </Card>
     </div>
   );
-} 
+}

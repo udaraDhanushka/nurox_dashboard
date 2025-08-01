@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as bcrypt from 'bcryptjs';
-import { UserRole, getDefaultRoute, requiresProfile, requiresOrganization, hasDashboardAccess } from '@/lib/roles';
+import {
+  UserRole,
+  getDefaultRoute,
+  requiresProfile,
+  requiresOrganization,
+  hasDashboardAccess,
+} from '@/lib/roles';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-fallback-secret-key';
@@ -21,8 +27,8 @@ async function validateUserCredentials(email: string, password: string) {
         hospital: true,
         pharmacy: true,
         laboratory: true,
-        insuranceCompany: true
-      }
+        insuranceCompany: true,
+      },
     });
 
     if (!user) {
@@ -35,56 +41,57 @@ async function validateUserCredentials(email: string, password: string) {
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
+
     if (!isPasswordValid) {
       return { success: false, message: 'Invalid email or password' };
     }
 
     // Validate role-specific requirements
     const userRole = user.role as UserRole;
-    
+
     // Check if user has dashboard access
     if (!hasDashboardAccess(userRole)) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: `Dashboard access denied. ${userRole === UserRole.PATIENT ? 'Patients' : 'Insurance Agents'} must use the Nurox Mobile App.`,
         requiresMobileApp: true,
-        role: userRole
+        role: userRole,
       };
     }
-    
+
     // Check if profile is required and exists
     if (requiresProfile(userRole)) {
-      const hasProfile = 
+      const hasProfile =
         (userRole === UserRole.PATIENT && user.patientProfile) ||
         (userRole === UserRole.DOCTOR && user.doctorProfile) ||
         (userRole === UserRole.PHARMACIST && user.pharmacistProfile) ||
         (userRole === UserRole.MLT && user.mltProfile);
-      
+
       if (!hasProfile) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: 'Profile setup required. Please complete your profile.',
           requiresProfileSetup: true,
-          role: userRole
+          role: userRole,
         };
       }
     }
-    
+
     // Check if organization affiliation is required
     if (requiresOrganization(userRole)) {
-      const hasOrganization = 
+      const hasOrganization =
         (userRole === UserRole.HOSPITAL_ADMIN && user.hospitalId) ||
         (userRole === UserRole.PHARMACY_ADMIN && user.pharmacyId) ||
         (userRole === UserRole.LAB_ADMIN && user.laboratoryId) ||
-        ([UserRole.INSURANCE_ADMIN, UserRole.INSURANCE_AGENT].includes(userRole) && user.insuranceId);
-      
+        ([UserRole.INSURANCE_ADMIN, UserRole.INSURANCE_AGENT].includes(userRole) &&
+          user.insuranceId);
+
       if (!hasOrganization) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: 'Organization affiliation required. Please contact your administrator.',
           requiresOrganization: true,
-          role: userRole
+          role: userRole,
         };
       }
     }
@@ -121,12 +128,12 @@ async function validateUserCredentials(email: string, password: string) {
       laboratory: user.laboratory,
       insuranceCompany: user.insuranceCompany,
       // Add default route for redirection
-      defaultRoute: getDefaultRoute(userRole)
+      defaultRoute: getDefaultRoute(userRole),
     };
 
     return {
       success: true,
-      user: userForResponse
+      user: userForResponse,
     };
   } catch (error) {
     console.error('Database authentication error:', error);
@@ -160,15 +167,13 @@ export async function POST(request: NextRequest) {
       userId: result.user!.id,
       email: result.user!.email,
       role: result.user!.role,
-      iat: Math.floor(Date.now() / 1000)
+      iat: Math.floor(Date.now() / 1000),
     };
-    
+
     const accessToken = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-    const refreshToken = jwt.sign(
-      { ...tokenPayload, type: 'refresh' }, 
-      JWT_SECRET, 
-      { expiresIn: '7d' }
-    );
+    const refreshToken = jwt.sign({ ...tokenPayload, type: 'refresh' }, JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     return NextResponse.json({
       success: true,
@@ -177,15 +182,11 @@ export async function POST(request: NextRequest) {
         user: result.user,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-      }
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+      },
     });
-
   } catch (error) {
     console.error('Login API error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }

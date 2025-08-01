@@ -74,17 +74,17 @@ const inventory = [
 
 // Form schemas
 const updateStockSchema = z.object({
-  quantity: z.string().transform((val) => parseInt(val, 10)),
+  quantity: z.string().transform(val => parseInt(val, 10)),
   reason: z.string().min(1, 'Reason is required'),
 });
 
 const newItemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   category: z.string().min(1, 'Category is required'),
-  quantity: z.string().transform((val) => parseInt(val, 10)),
+  quantity: z.string().transform(val => parseInt(val, 10)),
   unit: z.string().min(1, 'Unit is required'),
   supplier: z.string().min(1, 'Supplier is required'),
-  reorderPoint: z.string().transform((val) => parseInt(val, 10)),
+  reorderPoint: z.string().transform(val => parseInt(val, 10)),
 });
 
 export default function InventoryPage() {
@@ -131,13 +131,13 @@ export default function InventoryPage() {
       setIsUpdatingStock(true);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Here you would typically update the stock in your database
       console.log('Updating stock:', {
         itemId: selectedItem?.id,
         ...data,
       });
-      
+
       toast.success('Stock updated successfully');
       setShowUpdateStockModal(false);
     } catch (error) {
@@ -153,10 +153,10 @@ export default function InventoryPage() {
       setIsAddingItem(true);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Here you would typically save the new item to your database
       console.log('Adding new item:', data);
-      
+
       toast.success('Item added successfully');
       setShowNewItemModal(false);
     } catch (error) {
@@ -168,13 +168,13 @@ export default function InventoryPage() {
   };
 
   const filteredInventory = inventory.filter(item => {
-    const matchesSearch = 
+    const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
     const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
-    
+
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
@@ -257,7 +257,7 @@ export default function InventoryPage() {
                   placeholder="Search inventory..."
                   className="pl-8 md:w-[300px]"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
@@ -304,7 +304,7 @@ export default function InventoryPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredInventory.map((item) => (
+              {filteredInventory.map(item => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.id}</TableCell>
                   <TableCell>{item.name}</TableCell>
@@ -318,8 +318,8 @@ export default function InventoryPage() {
                         item.status === 'In Stock'
                           ? 'bg-green-100 text-green-800'
                           : item.status === 'Low Stock'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
                       }`}
                     >
                       {item.status}
@@ -358,20 +358,24 @@ export default function InventoryPage() {
             <div className="space-y-2">
               <Label>Item Details</Label>
               <div className="text-sm">
-                <p><strong>ID:</strong> {selectedItem?.id}</p>
-                <p><strong>Name:</strong> {selectedItem?.name}</p>
-                <p><strong>Current Quantity:</strong> {selectedItem?.quantity} {selectedItem?.unit}</p>
+                <p>
+                  <strong>ID:</strong> {selectedItem?.id}
+                </p>
+                <p>
+                  <strong>Name:</strong> {selectedItem?.name}
+                </p>
+                <p>
+                  <strong>Current Quantity:</strong> {selectedItem?.quantity} {selectedItem?.unit}
+                </p>
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="quantity">New Quantity</Label>
-              <Input
-                id="quantity"
-                type="number"
-                {...updateStockForm.register('quantity')}
-              />
+              <Input id="quantity" type="number" {...updateStockForm.register('quantity')} />
               {updateStockForm.formState.errors.quantity && (
-                <p className="text-sm text-red-500">{updateStockForm.formState.errors.quantity.message}</p>
+                <p className="text-sm text-red-500">
+                  {updateStockForm.formState.errors.quantity.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -382,17 +386,20 @@ export default function InventoryPage() {
                 placeholder="e.g., New stock arrival, Stock correction"
               />
               {updateStockForm.formState.errors.reason && (
-                <p className="text-sm text-red-500">{updateStockForm.formState.errors.reason.message}</p>
+                <p className="text-sm text-red-500">
+                  {updateStockForm.formState.errors.reason.message}
+                </p>
               )}
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowUpdateStockModal(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowUpdateStockModal(false)}
+              >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                disabled={isUpdatingStock}
-              >
+              <Button type="submit" disabled={isUpdatingStock}>
                 {isUpdatingStock ? (
                   <>
                     <span className="mr-2">Updating...</span>
@@ -428,7 +435,9 @@ export default function InventoryPage() {
                   placeholder="e.g., Amoxicillin 500mg"
                 />
                 {newItemForm.formState.errors.name && (
-                  <p className="text-sm text-red-500">{newItemForm.formState.errors.name.message}</p>
+                  <p className="text-sm text-red-500">
+                    {newItemForm.formState.errors.name.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -439,29 +448,27 @@ export default function InventoryPage() {
                   placeholder="e.g., Antibiotics"
                 />
                 {newItemForm.formState.errors.category && (
-                  <p className="text-sm text-red-500">{newItemForm.formState.errors.category.message}</p>
+                  <p className="text-sm text-red-500">
+                    {newItemForm.formState.errors.category.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="quantity">Initial Quantity</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  {...newItemForm.register('quantity')}
-                />
+                <Input id="quantity" type="number" {...newItemForm.register('quantity')} />
                 {newItemForm.formState.errors.quantity && (
-                  <p className="text-sm text-red-500">{newItemForm.formState.errors.quantity.message}</p>
+                  <p className="text-sm text-red-500">
+                    {newItemForm.formState.errors.quantity.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="unit">Unit</Label>
-                <Input
-                  id="unit"
-                  {...newItemForm.register('unit')}
-                  placeholder="e.g., Tablets"
-                />
+                <Input id="unit" {...newItemForm.register('unit')} placeholder="e.g., Tablets" />
                 {newItemForm.formState.errors.unit && (
-                  <p className="text-sm text-red-500">{newItemForm.formState.errors.unit.message}</p>
+                  <p className="text-sm text-red-500">
+                    {newItemForm.formState.errors.unit.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -472,7 +479,9 @@ export default function InventoryPage() {
                   placeholder="e.g., PharmaCorp Inc."
                 />
                 {newItemForm.formState.errors.supplier && (
-                  <p className="text-sm text-red-500">{newItemForm.formState.errors.supplier.message}</p>
+                  <p className="text-sm text-red-500">
+                    {newItemForm.formState.errors.supplier.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -484,7 +493,9 @@ export default function InventoryPage() {
                   placeholder="Minimum quantity before reorder"
                 />
                 {newItemForm.formState.errors.reorderPoint && (
-                  <p className="text-sm text-red-500">{newItemForm.formState.errors.reorderPoint.message}</p>
+                  <p className="text-sm text-red-500">
+                    {newItemForm.formState.errors.reorderPoint.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -492,10 +503,7 @@ export default function InventoryPage() {
               <Button type="button" variant="outline" onClick={() => setShowNewItemModal(false)}>
                 Cancel
               </Button>
-              <Button 
-                type="submit"
-                disabled={isAddingItem}
-              >
+              <Button type="submit" disabled={isAddingItem}>
                 {isAddingItem ? (
                   <>
                     <span className="mr-2">Adding...</span>
@@ -511,4 +519,4 @@ export default function InventoryPage() {
       </Dialog>
     </div>
   );
-} 
+}

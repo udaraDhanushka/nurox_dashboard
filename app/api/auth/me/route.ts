@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get the authorization header
     const authHeader = request.headers.get('authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { success: false, message: 'Authorization token required' },
@@ -21,10 +21,7 @@ export async function GET(request: NextRequest) {
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     if (!token || token === 'null' || token === 'undefined') {
-      return NextResponse.json(
-        { success: false, message: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
     try {
@@ -38,7 +35,7 @@ export async function GET(request: NextRequest) {
 
       // Verify JWT token
       const decoded = jwt.verify(token, JWT_SECRET) as any;
-      
+
       if (!decoded.userId) {
         return NextResponse.json(
           { success: false, message: 'Invalid token payload' },
@@ -57,8 +54,8 @@ export async function GET(request: NextRequest) {
           hospital: true,
           pharmacy: true,
           laboratory: true,
-          insuranceCompany: true
-        }
+          insuranceCompany: true,
+        },
       });
 
       if (!user || !user.isActive) {
@@ -76,10 +73,9 @@ export async function GET(request: NextRequest) {
           id: user.id,
           email: user.email,
           role: user.role,
-          isActive: user.isActive
-        }
+          isActive: user.isActive,
+        },
       });
-
     } catch (jwtError) {
       console.error('JWT verification error:', jwtError);
       return NextResponse.json(
@@ -87,12 +83,8 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-
   } catch (error) {
     console.error('Get current user API error:', error);
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }

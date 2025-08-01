@@ -48,9 +48,7 @@ export function NotificationsMenu() {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const markAsRead = (id: string) => {
-    setNotifications(notifications.map(n =>
-      n.id === id ? { ...n, read: true } : n
-    ));
+    setNotifications(notifications.map(n => (n.id === id ? { ...n, read: true } : n)));
   };
 
   return (
@@ -69,11 +67,9 @@ export function NotificationsMenu() {
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {notifications.length === 0 ? (
-          <div className="p-4 text-center text-sm text-gray-500">
-            No notifications
-          </div>
+          <div className="p-4 text-center text-sm text-gray-500">No notifications</div>
         ) : (
-          notifications.map((notification) => (
+          notifications.map(notification => (
             <DropdownMenuItem
               key={notification.id}
               className="p-4 cursor-pointer"
@@ -95,4 +91,4 @@ export function NotificationsMenu() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-} 
+}

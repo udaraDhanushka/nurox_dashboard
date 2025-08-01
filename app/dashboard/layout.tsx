@@ -4,11 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isHydrated } = useAuth();
   const router = useRouter();
 
@@ -31,4 +27,4 @@ export default function Layout({
   }
 
   return <>{children}</>;
-} 
+}
